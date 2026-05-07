@@ -516,27 +516,89 @@ async function fetchRate() {
 }
 
 // ── STOCK PRICE ──
-async function fetchPrice(ticker, market) {
-  if (!FINNHUB_KEY || FINNHUB_KEY.length < 10) {
-    return null;
+async function fetchPriceTW(ticker) {
+  const isTWO = ticker.endsWith('.TWO');
+  const code = isTWO ? ticker.replace('.TWO','') : ticker.replace('.TW','');
+
+  // TWSE (上市) official API
+  if (!isTWO) {
+    try {
+      const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_${code}.tw&json=1&delay=0`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      const info = d?.msgArray?.[0];
+      if (!info || !info.z || info.z === '-') throw new Error();
+      const price = parseFloat(info.z);
+      const prevClose = parseFloat(info.y) || price;
+      const change = price - prevClose;
+      const changePct = prevClose ? (change / prevClose) * 100 : 0;
+      return { price, change, changePct, prevClose };
+    } catch {}
   }
-  const cacheKey = ticker;
-  const now = Date.now();
-  if (priceCache[cacheKey] && now - priceCache[cacheKey].ts < 60000) {
-    return priceCache[cacheKey].data;
+
+  // TPEX (上櫃) official API
+  if (isTWO) {
+    try {
+      const url = `https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes?stockNo=${code}`;
+      const r = await fetch(url);
+      if (!r.ok) throw new Error();
+      const d = await r.json();
+      const info = d?.[0];
+      if (!info) throw new Error();
+      const price = parseFloat(info.ClosingPrice || info.LatestPrice);
+      const prevClose = parseFloat(info.PreviousClose) || price;
+      if (!price) throw new Error();
+      const change = price - prevClose;
+      const changePct = prevClose ? (change / prevClose) * 100 : 0;
+      return { price, change, changePct, prevClose };
+    } catch {}
   }
+
+  // Fallback: corsproxy + Yahoo Finance
+  try {
+    const sym = encodeURIComponent(ticker);
+    const url = `https://corsproxy.io/?https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=1d`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    const meta = d?.chart?.result?.[0]?.meta;
+    if (!meta?.regularMarketPrice) throw new Error();
+    const price = meta.regularMarketPrice;
+    const prevClose = meta.chartPreviousClose || meta.previousClose || price;
+    const change = price - prevClose;
+    const changePct = prevClose ? (change / prevClose) * 100 : 0;
+    return { price, change, changePct, prevClose };
+  } catch {}
+
+  return null;
+}
+
+async function fetchPriceUS(ticker) {
+  if (!FINNHUB_KEY || FINNHUB_KEY.length < 10) return null;
   try {
     const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_KEY}`;
     const r = await fetch(url);
     if (!r.ok) throw new Error();
     const d = await r.json();
     if (!d.c) throw new Error();
-    const result = { price: d.c, change: d.d, changePct: d.dp, prevClose: d.pc };
-    priceCache[cacheKey] = { data: result, ts: now };
-    return result;
+    return { price: d.c, change: d.d, changePct: d.dp, prevClose: d.pc };
   } catch {
     return null;
   }
+}
+
+async function fetchPrice(ticker, market) {
+  const cacheKey = ticker;
+  const now = Date.now();
+  if (priceCache[cacheKey] && now - priceCache[cacheKey].ts < 60000) {
+    return priceCache[cacheKey].data;
+  }
+  const result = market === 'tw'
+    ? await fetchPriceTW(ticker)
+    : await fetchPriceUS(ticker);
+  if (result) priceCache[cacheKey] = { data: result, ts: now };
+  return result;
 }
 
 async function fetchAll() {
@@ -764,8 +826,7 @@ function renderAll() {
     const el = document.getElementById('price-block-' + id);
     if (!el) return;
     if (!priceData) {
-      const isKey = !FINNHUB_KEY || FINNHUB_KEY.length < 10;
-      el.innerHTML = `<span class="price-loading">${isKey ? '請在 index.html 填入 Finnhub API Key' : '股價暫時無法取得'}</span>`;
+      el.innerHTML = `<span class="price-loading">股價暫時無法取得，請點「更新匯率」重試</span>`;
     } else {
       const isUS = c.market === 'us';
       const twdPrice = isUS ? priceData.price * usdTwd : priceData.price;

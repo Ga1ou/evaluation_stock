@@ -24,7 +24,7 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
 
   // Always go network for API calls (price/rate)
-  if (url.hostname === 'finnhub.io' || url.hostname.includes('jsdelivr')) {
+  if (url.hostname === 'finnhub.io' || url.hostname.includes('jsdelivr') || url.hostname.includes('allorigins') || url.hostname.includes('yahoo')) {
     e.respondWith(fetch(e.request).catch(() => new Response('{}', { headers: { 'Content-Type': 'application/json' } })));
     return;
   }
