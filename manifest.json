@@ -1,0 +1,38 @@
+{
+  "name": "股票估值工具",
+  "short_name": "股票估值",
+  "description": "台美股票 EPS 估值與股價預測工具",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "utilities"],
+  "shortcuts": [
+    {
+      "name": "群聯分析",
+      "url": "./index.html#PHISON",
+      "description": "直接開啟群聯估值頁面"
+    },
+    {
+      "name": "台積電分析",
+      "url": "./index.html#TSMC_TW",
+      "description": "直接開啟台積電估值頁面"
+    }
+  ]
+}
