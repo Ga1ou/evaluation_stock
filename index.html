@@ -177,6 +177,7 @@ canvas{width:100%!important}
   <button class="tab-btn" onclick="switchTab('portfolio',this)">💼 持股</button>
   <button class="tab-btn" onclick="switchTab('alerts',this)">🔔 警示</button>
   <button class="tab-btn" onclick="switchTab('news',this)">📰 新聞</button>
+  <button class="tab-btn" onclick="switchTab('game',this)">🎮 遊戲</button>
 </div>
 <div id="tab-analyze">
   <div class="chips-wrap">
@@ -230,6 +231,18 @@ canvas{width:100%!important}
     <div class="empty-state"><div class="empty-icon">📰</div><div>點選公司載入新聞</div></div>
   </div>
 </div>
+<div id="tab-game" style="display:none">
+  <div class="port-section">
+    <div class="sec-t" style="text-align:center; font-size:12px; margin-bottom:12px;">擊退空頭熊市方塊</div>
+    <div style="position:relative; width:100%; max-width:400px; margin:0 auto;">
+      <canvas id="game-canvas" style="background:#042C53; border-radius:12px; width:100%; height:350px; display:block;"></canvas>
+      <div style="text-align:center; margin-top:16px;">
+        <button id="game-btn" class="port-btn" onclick="startGame()" style="font-size:15px; padding:10px 24px;">開始遊戲</button>
+        <div id="game-score" style="margin-top:10px; font-size:16px; font-weight:600; font-family:var(--mono);">Score: 0</div>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="disclaimer">資料來源：Finnhub、TWSE、TPEX、公開財報及法人共識。僅供投資參考，不構成買賣建議。</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -265,7 +278,7 @@ const COMPANIES={
     data2025:{eps_twd:66.16,epsUnit:'NT$',peHigh:30,peAvg:20,maxPrice2025_twd:1800,note:'2025全年 EPS NT$66.16（年減1%）'},
     analystTarget:{min:1000,avg:1350,max:1700,count:18,strongBuy:12,buy:4,hold:2,sell:0},
     epsHistory:[{yr:'2021',v:55},{yr:'2022',v:68},{yr:'2023',v:58},{yr:'2024',v:67},{yr:'2025',v:66.16},{yr:'2026E',v:63,proj:true},{yr:'2027E',v:72,proj2:true}],
-    q1_2026:{revenue:{'1月':'NT$1,241億','2月':'NT$1,074億','3月':'NT$1,502億'},total:'NT$3,817億',epsEst:'NT$14~16（法人預估）',note:'Q1 2026 財報預計2026年5月公布'},
+    q1_2026:{revenue:{'1月':'NT$1,241億','2月':'NT$1074億','3月':'NT$1,502億'},total:'NT$3,817億',epsEst:'NT$14~16（法人預估）',note:'Q1 2026 財報預計2026年5月公布'},
     eps2026_cons:72,eps2026_bear:63,peRows:[10,15,18,20,25,28,30],targetPe:18,
     mktcap:'NT$1.7兆',vol:'~2萬張/日'},
   PHISON:{name:'群聯',ticker:'8299.TWO',fhTicker:null,sub:'TPEX: 8299',market:'tw',
@@ -320,10 +333,11 @@ function switchTab(tab,btn){
   currentTab=tab;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  ['analyze','portfolio','alerts','news'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'':'none'});
+  ['analyze','portfolio','alerts','news','game'].forEach(t=>{document.getElementById('tab-'+t).style.display=t===tab?'':'none'});
   if(tab==='portfolio') renderPortfolio();
   if(tab==='alerts') renderAlerts();
   if(tab==='news') renderNewsChips();
+  if(tab==='game') initGame();
 }
 
 // RATE
@@ -343,7 +357,7 @@ async function fetchPriceTW(ticker){
   const isTWO=ticker.endsWith('.TWO');
   const code=isTWO?ticker.replace('.TWO',''):ticker.replace('.TW','');
 
-  // Yahoo Finance via corsproxy (most reliable for both TWSE & TPEX)
+  // Yahoo Finance via corsproxy
   try{
     const sym=encodeURIComponent(ticker);
     const r=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+sym+'?interval=1d&range=1d'));
@@ -378,18 +392,6 @@ async function fetchPriceTW(ticker){
       }
     }catch{}
   }
-
-  // allorigins fallback
-  try{
-    const sym=encodeURIComponent(ticker);
-    const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+sym+'?interval=1d&range=1d'));
-    const d=await r.json();const meta=d?.chart?.result?.[0]?.meta;
-    if(meta?.regularMarketPrice){
-      const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||price;
-      return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};
-    }
-  }catch{}
-
   return null;
 }
 
@@ -441,15 +443,22 @@ async function fetchHistory(id){
           const rows=key?d[key]:d;
           if(rows&&rows.length){
             rows.forEach(row=>{
-              if(!isTWO){
-                const dt=row[0].replace(/\//g,'-');const close=parseFloat(row[6].replace(/,/g,''));
-                if(!isNaN(close)) prices.push({t:new Date('19110101').getTime()+parseInt(dt.split('-')[0])*365.25*86400000,label:dt,p:close});
+              // BugFix: 修復 X 軸 NaN 問題，改用民國年轉西元年，並支援 TPEX 的 date
+              let dtStr = isTWO ? row.Date : row[0];
+              if(!dtStr) return;
+              const parts = dtStr.replace(/\//g,'-').split('-');
+              const closeStr = isTWO ? row.ClosingPrice : row[6];
+              const close=parseFloat(String(closeStr).replace(/,/g,''));
+              if(!isNaN(close)){
+                const year = parseInt(parts[0]) + 1911;
+                const t = new Date(year, parseInt(parts[1])-1, parseInt(parts[2])).getTime();
+                prices.push({t, p:close});
               }
             });
           }
         }catch{}
       }
-      // Simpler fallback: just use recent prices from corsproxy Yahoo
+      // BugFix: 修復 Yahoo 備用 API 的 timestamp 讀取 (timestamp 而非 timestamps)
       if(prices.length<5){
         try{
           const sym=encodeURIComponent(ticker);
@@ -457,13 +466,15 @@ async function fetchHistory(id){
           const d=await r.json();
           const res=d?.chart?.result?.[0];
           if(res){
-            const ts=res.timestamps||[];const cs=res.indicators?.quote?.[0]?.close||[];
+            const ts=res.timestamp||[];const cs=res.indicators?.quote?.[0]?.close||[];
             prices=ts.map((t,i)=>({t:t*1000,p:cs[i]})).filter(x=>x.p);
           }
         }catch{}
       }
     }
   }catch{}
+  // 按照時間排序確保走勢圖正確
+  prices.sort((a,b)=>a.t-b.t);
   histCache[id]=prices;
   return prices;
 }
@@ -476,7 +487,6 @@ async function drawChart(id,canvasId){
   if(chartInstances[canvasId]){chartInstances[canvasId].destroy();delete chartInstances[canvasId];}
   ctx.getContext('2d').clearRect(0,0,ctx.width,ctx.height);
 
-  // Show loading
   const parent=ctx.parentElement;
   let loadDiv=parent.querySelector('.chart-loading');
   if(!loadDiv){loadDiv=document.createElement('div');loadDiv.className='chart-loading';loadDiv.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--text3)';loadDiv.textContent='載入走勢中…';parent.style.position='relative';parent.appendChild(loadDiv);}
@@ -489,7 +499,6 @@ async function drawChart(id,canvasId){
   const curPriceData=priceCache[c.ticker]?.data;
   const curPrice=curPriceData?(isUS?curPriceData.price*usdTwd:curPriceData.price):null;
 
-  // Build labels and data
   let labels=[],data=[];
   if(hist.length>0){
     hist.forEach(h=>{
@@ -501,11 +510,15 @@ async function drawChart(id,canvasId){
     labels=['無資料'];data=[curPrice||0];
   }
 
-  // Forecast zone (next 4 points)
+  // BugFix: 修復台股預測目標價計算錯誤（不再強制乘上匯率）
   const forecastLabels=['Now','3M','6M','12M'];
-  const forecastAvg=at?[curPrice,curPrice+(at.avg*usdTwd-curPrice)*0.3,curPrice+(at.avg*usdTwd-curPrice)*0.7,at.avg*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
-  const forecastMax=at?[curPrice,curPrice+(at.max*(isUS?usdTwd:1)-curPrice)*0.3,curPrice+(at.max*(isUS?usdTwd:1)-curPrice)*0.7,at.max*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
-  const forecastMin=at?[curPrice,curPrice+(at.min*(isUS?usdTwd:1)-curPrice)*0.3,curPrice+(at.min*(isUS?usdTwd:1)-curPrice)*0.7,at.min*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
+  const tAvg = at ? (at.avg * (isUS ? usdTwd : 1)) : 0;
+  const tMax = at ? (at.max * (isUS ? usdTwd : 1)) : 0;
+  const tMin = at ? (at.min * (isUS ? usdTwd : 1)) : 0;
+  
+  const forecastAvg=at?[curPrice,curPrice+(tAvg-curPrice)*0.3,curPrice+(tAvg-curPrice)*0.7,tAvg].map(v=>v?+v.toFixed(0):null):[];
+  const forecastMax=at?[curPrice,curPrice+(tMax-curPrice)*0.3,curPrice+(tMax-curPrice)*0.7,tMax].map(v=>v?+v.toFixed(0):null):[];
+  const forecastMin=at?[curPrice,curPrice+(tMin-curPrice)*0.3,curPrice+(tMin-curPrice)*0.7,tMin].map(v=>v?+v.toFixed(0):null):[];
 
   const allLabels=[...labels,...forecastLabels.slice(1)];
   const nullPad=new Array(labels.length-1).fill(null);
@@ -560,20 +573,16 @@ function buildCard(id){
   const eps25s=isUS?`(${fmtUSD(d.eps)} USD)`:'';
   const maxP=isUS?fmtNT((d.maxPrice2025_usd||0)*usdTwd,0):fmtNT(d.maxPrice2025_twd,0);
 
-  // EPS history bars (in TWD for display)
   const hist=c.epsHistory||[];
   const histTwd=hist.map(h=>({...h,vt:isUS?h.v*usdTwd:h.v}));
   const maxV=Math.max(...histTwd.map(h=>Math.abs(h.vt)))*1.2||1;
   const chartHtml=histTwd.map(h=>`<div class="eps-bc"><div class="eps-bv">${Math.abs(h.vt)<100?h.vt.toFixed(0):Math.round(h.vt/100)+'h'}</div><div class="eps-bf${h.proj?' proj':h.proj2?' proj2':''}" style="height:${(Math.max(h.vt,0)/maxV*65).toFixed(0)}px"></div><div class="eps-by">${h.yr}</div></div>`).join('');
 
-  // Monthly revenue
   const entries=Object.entries(q.revenue||{});
   const monthHtml=entries.length&&entries.some(([,v])=>v)?'<div class="mgrid">'+entries.map(([m,v])=>`<div class="mcell"><div class="mm">${m}</div><div class="mv">${v||'—'}</div></div>`).join('')+'</div>':`<p style="font-size:12px;color:var(--text3);padding:4px 0">${q.totalLabel||'月度按季公告'}</p>`;
   const totalHtml=q.total?`<div class="total-bar"><span class="tl">Q1 2026 累計</span><span class="tv">${q.total}</span></div>`:'';
 
-  // Analyst target
   const at=c.analystTarget;
-  const atCurrency=isUS?'USD':'NT$';
   const atMax=isUS?fmtUSD(at.max):fmtNT(at.max);
   const atAvg=isUS?fmtUSD(at.avg):fmtNT(at.avg);
   const atMin=isUS?fmtUSD(at.min):fmtNT(at.min);
@@ -582,7 +591,6 @@ function buildCard(id){
   const ratingLabel=at.strongBuy/totalRating>0.5?'Strong Buy':at.strongBuy/totalRating>0.3?'Buy':'Hold';
   const ratingCls=ratingLabel==='Strong Buy'?'strong-buy':ratingLabel==='Buy'?'buy':'hold';
 
-  // PE rows
   const peRows=c.peRows.map(pe=>{const p=epsInTwd*pe;const isT=pe===c.targetPe;return`<tr class="${isT?'hi':''}" id="pe-row-${id}-${pe}"><td>PE ${pe}x${isT?' ★':''}</td><td>${fmtNT(epsInTwd,1)}</td><td>${fmtNT(p,0)}</td></tr>`;}).join('');
 
   const initEps=Math.round(epsInTwd),initPe=c.targetPe,slMax=Math.max(Math.round(epsInTwd*3),initEps+50);
@@ -669,7 +677,6 @@ async function updateCardPrice(id){
   const epsInTwd=isUS?c.eps2026_bear*usdTwd:c.eps2026_bear;
   c.peRows.forEach(pe=>{const row=document.getElementById(`pe-row-${id}-${pe}`);if(!row) return;Math.abs(pe-twdP/epsInTwd)<2.5?row.classList.add('cur'):row.classList.remove('cur');});
   checkAlerts(id,twdP);
-  // Draw chart after price is known
   drawChart(id,`chart-${id}`);
 }
 
@@ -754,7 +761,7 @@ function checkAlerts(id,price){
 }
 function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:nowrap';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
 
-// NEWS - Google News RSS for TW stocks, Finnhub for US
+// NEWS
 function renderNewsChips(){
   const ct=document.getElementById('news-chips');ct.innerHTML='';
   Object.entries(COMPANIES).forEach(([id,c])=>{const btn=document.createElement('button');btn.className='chip '+c.market+(newsSelected===id?' active':'');btn.innerHTML=`<div class="cdot"></div>${c.name}`;btn.onclick=()=>loadNews(id,btn);ct.appendChild(btn);});
@@ -770,7 +777,6 @@ async function loadNews(id,btn){
   let newsItems=[];
 
   if(c.market==='us'){
-    // Finnhub for US stocks
     try{
       const to=new Date().toISOString().split('T')[0];
       const from=new Date(Date.now()-7*24*3600*1000).toISOString().split('T')[0];
@@ -784,7 +790,6 @@ async function loadNews(id,btn){
       }));
     }catch{}
   } else {
-    // Google News RSS via corsproxy for TW stocks
     const query=encodeURIComponent(c.name+' 股票');
     try{
       const rssUrl=`https://news.google.com/rss/search?q=${query}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
@@ -809,6 +814,105 @@ async function loadNews(id,btn){
     const dt=n.time;const ds=`${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,'0')}`;
     return`<div class="news-item" onclick="window.open('${n.url}','_blank')"><div class="news-headline">${n.headline}</div><div class="news-meta"><span>${ds}</span><span>${n.source}</span><span class="news-sent ${n.sentiment}">${n.sentLabel}</span></div></div>`;
   }).join('')+'</div>';
+}
+
+// GAME LOGIC
+let gameLoop, gameActive=false;
+let player, bullets, enemies, score, frameCount=0;
+function initGame() {
+  if(gameActive) return;
+  const cvs = document.getElementById('game-canvas');
+  cvs.width = cvs.offsetWidth || 350;
+  cvs.height = cvs.offsetHeight || 350;
+
+  if (!cvs.dataset.bound) {
+    cvs.addEventListener('touchmove', e => {
+      if(!gameActive) return;
+      e.preventDefault();
+      const rect = cvs.getBoundingClientRect();
+      const scaleX = cvs.width / rect.width;
+      player.x = (e.touches[0].clientX - rect.left) * scaleX - player.w/2;
+      player.x = Math.max(0, Math.min(cvs.width - player.w, player.x));
+    }, {passive: false});
+    cvs.addEventListener('mousemove', e => {
+      if(!gameActive) return;
+      const rect = cvs.getBoundingClientRect();
+      const scaleX = cvs.width / rect.width;
+      player.x = (e.clientX - rect.left) * scaleX - player.w/2;
+      player.x = Math.max(0, Math.min(cvs.width - player.w, player.x));
+    });
+    cvs.dataset.bound = "true";
+  }
+}
+
+window.startGame = function() {
+  if(gameActive) return;
+  const cvs = document.getElementById('game-canvas');
+  const gctx = cvs.getContext('2d');
+  gameActive = true;
+  player = {x: cvs.width/2 - 15, y: cvs.height - 40, w: 30, h: 30};
+  bullets = [];
+  enemies = [];
+  score = 0;
+  frameCount = 0;
+  document.getElementById('game-score').textContent = 'Score: 0';
+  document.getElementById('game-btn').style.display = 'none';
+
+  function update() {
+    if(!gameActive) return;
+    gctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    // 繪製玩家 (綠色三角形)
+    gctx.fillStyle = '#1d9e75';
+    gctx.beginPath();
+    gctx.moveTo(player.x + player.w/2, player.y);
+    gctx.lineTo(player.x + player.w, player.y + player.h);
+    gctx.lineTo(player.x, player.y + player.h);
+    gctx.fill();
+
+    frameCount++;
+    if(frameCount % 12 === 0) bullets.push({x: player.x + player.w/2 - 2, y: player.y, w: 4, h: 10});
+    if(frameCount % 45 === 0) enemies.push({x: Math.random() * (cvs.width - 20), y: -20, w: 20, h: 20, speed: 1.5 + Math.random()*2.5});
+
+    gctx.fillStyle = '#fff';
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      let b = bullets[i];
+      b.y -= 7;
+      gctx.fillRect(b.x, b.y, b.w, b.h);
+      if(b.y < 0) bullets.splice(i, 1);
+    }
+
+    gctx.fillStyle = '#e24b4a'; // 紅色空頭方塊
+    for (let i = enemies.length - 1; i >= 0; i--) {
+      let e = enemies[i];
+      e.y += e.speed;
+      gctx.fillRect(e.x, e.y, e.w, e.h);
+
+      // 玩家碰撞判定
+      if(e.x < player.x + player.w && e.x + e.w > player.x && e.y < player.y + player.h && e.y + e.h > player.y) {
+        gameActive = false;
+        document.getElementById('game-btn').style.display = 'inline-block';
+        document.getElementById('game-btn').textContent = '重新挑戰';
+      } else {
+        // 子彈碰撞判定
+        let hit = false;
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          let b = bullets[j];
+          if(b.x < e.x + e.w && b.x + b.w > e.x && b.y < e.y + e.h && b.y + b.h > e.y) {
+            enemies.splice(i, 1);
+            bullets.splice(j, 1);
+            score += 10;
+            document.getElementById('game-score').textContent = 'Score: ' + score;
+            hit = true;
+            break;
+          }
+        }
+        if(!hit && e.y > cvs.height) enemies.splice(i, 1);
+      }
+    }
+    if(gameActive) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
 }
 
 async function refresh(){
