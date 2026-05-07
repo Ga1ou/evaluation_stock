@@ -12,34 +12,30 @@
 <title>股票估值</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f5f7;--surface:#fff;--surface2:#f5f5f7;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--green:#1d9e75;--green-bg:#e8f7f1;--green-text:#085041;--red:#e24b4a;--red-bg:#fef0f0;--red-text:#8b1a1a;--blue:#378add;--blue-bg:#e6f1fb;--blue-text:#0c447c;--orange:#e8a020;--orange-bg:#fef4e0;--orange-text:#7a4500;--accent:#1d1d1f;--r-sm:10px;--r:16px;--r-lg:20px;--font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono',monospace}
+:root{--bg:#f5f5f7;--surface:#fff;--surface2:#f5f5f7;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);--text:#1d1d1f;--text2:#6e6e73;--text3:#aeaeb2;--green:#1d9e75;--green-bg:#e8f7f1;--green-text:#085041;--red:#e24b4a;--red-bg:#fef0f0;--red-text:#8b1a1a;--blue:#378add;--blue-bg:#e6f1fb;--blue-text:#0c447c;--orange:#e8a020;--orange-bg:#fef4e0;--orange-text:#7a4500;--accent:#1d1d1f;--font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono',monospace}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
-.app{max-width:860px;margin:0 auto;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 32px)}
-.nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0 14px;position:sticky;top:0;background:var(--bg);z-index:200;gap:10px}
+.app{max-width:900px;margin:0 auto;padding:0 16px calc(env(safe-area-inset-bottom,0px)+32px)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0 12px;position:sticky;top:0;background:var(--bg);z-index:200}
 .nav-left{display:flex;align-items:center;gap:8px}
 .nav-icon{width:28px;height:28px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .nav-icon svg{width:16px;height:16px;fill:#fff}
 .nav-title{font-size:16px;font-weight:600;letter-spacing:-.3px}
-.nav-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.pill{display:flex;align-items:center;gap:5px;background:var(--surface);border:.5px solid var(--border2);border-radius:20px;padding:5px 10px 5px 8px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:.15s;white-space:nowrap}
+.pill{display:flex;align-items:center;gap:5px;background:var(--surface);border:.5px solid var(--border2);border-radius:20px;padding:5px 10px 5px 8px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap}
 .pill:active{transform:scale(.96)}
 .dot-live{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:.3s}
 .dot-live.on{background:var(--green)}
-.tabs{display:flex;gap:0;background:var(--surface);border-radius:12px;border:.5px solid var(--border);overflow:hidden;margin-bottom:14px}
-.tab-btn{flex:1;padding:9px 6px;font-size:12px;font-weight:500;color:var(--text2);background:transparent;border:none;cursor:pointer;transition:.15s;white-space:nowrap}
+.tabs{display:flex;background:var(--surface);border-radius:12px;border:.5px solid var(--border);overflow:hidden;margin-bottom:14px}
+.tab-btn{flex:1;padding:9px 4px;font-size:12px;font-weight:500;color:var(--text2);background:transparent;border:none;cursor:pointer;white-space:nowrap}
 .tab-btn.active{background:var(--accent);color:#fff}
 .chips-wrap{margin-bottom:12px}
 .chips-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;border:.5px solid var(--border2);background:var(--surface);font-size:12px;font-weight:500;color:var(--text);cursor:pointer;transition:.15s;white-space:nowrap}
-.chip:active{transform:scale(.95)}
+.chip{display:flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;border:.5px solid var(--border2);background:var(--surface);font-size:12px;font-weight:500;cursor:pointer;transition:.15s;white-space:nowrap}
 .chip .cdot{width:5px;height:5px;border-radius:50%}
-.chip.us .cdot{background:var(--blue)}
-.chip.tw .cdot{background:var(--green)}
+.chip.us .cdot{background:var(--blue)}.chip.tw .cdot{background:var(--green)}
 .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.chip.active.us{background:#042C53;border-color:#042C53}
-.chip.active.tw{background:#085041;border-color:#085041}
+.chip.active.us{background:#042C53}.chip.active.tw{background:#085041}
 .chip.active .cdot{background:rgba(255,255,255,.5)}
 .cmp-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--text2)}
 .toggle{width:36px;height:20px;background:var(--border2);border-radius:10px;cursor:pointer;position:relative;transition:.2s;flex-shrink:0}
@@ -48,19 +44,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .toggle.on::after{left:18px}
 .cards{display:grid;gap:14px;grid-template-columns:1fr}
 .cards.dual{grid-template-columns:1fr 1fr}
-@media(max-width:600px){.cards.dual{grid-template-columns:1fr}}
-.card{background:var(--surface);border-radius:var(--r-lg);border:.5px solid var(--border);overflow:hidden;animation:fadeUp .25s ease}
+@media(max-width:620px){.cards.dual{grid-template-columns:1fr}}
+.card{background:var(--surface);border-radius:20px;border:.5px solid var(--border);overflow:hidden;animation:fadeUp .25s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .c-head{padding:16px 18px 12px;border-bottom:.5px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
 .c-name{font-size:17px;font-weight:600;letter-spacing:-.4px}
 .c-ticker{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono)}
 .badge{font-size:10px;font-weight:600;letter-spacing:.4px;padding:3px 8px;border-radius:6px}
-.badge.us{background:var(--blue-bg);color:var(--blue-text)}
-.badge.tw{background:var(--green-bg);color:var(--green-text)}
+.badge.us{background:var(--blue-bg);color:var(--blue-text)}.badge.tw{background:var(--green-bg);color:var(--green-text)}
 .price-row{padding:12px 18px;border-bottom:.5px solid var(--border)}
 .live-price{font-size:26px;font-weight:600;letter-spacing:-.8px;font-family:var(--mono)}
-.price-chg{font-size:13px;font-weight:500}
-.price-chg.up{color:var(--green)}.price-chg.dn{color:var(--red)}
+.price-chg{font-size:13px;font-weight:500}.price-chg.up{color:var(--green)}.price-chg.dn{color:var(--red)}
 .price-loading{font-size:13px;color:var(--text3)}
 .signal{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .signal.cheap{background:var(--green-bg);color:var(--green-text)}
@@ -71,10 +65,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .sec:last-child{border-bottom:none}
 .sec-t{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
-.row-l{font-size:13px;color:var(--text2)}
-.row-v{font-size:13px;font-weight:500;font-family:var(--mono)}
+.row-l{font-size:13px;color:var(--text2)}.row-v{font-size:13px;font-weight:500;font-family:var(--mono)}
 .row-v.g{color:var(--green)}.row-v.r{color:var(--red)}
 .note{font-size:10px;color:var(--text3);margin-top:5px;line-height:1.4}
+/* chart canvas */
+.chart-wrap{position:relative;width:100%;height:220px;margin:4px 0}
+canvas{width:100%!important}
+/* analyst rating */
+.rating-box{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.rating-item{background:var(--surface2);border-radius:8px;padding:8px 10px;text-align:center}
+.rating-val{font-size:18px;font-weight:700}
+.rating-val.strong-buy{color:var(--green)}.rating-val.buy{color:#5ab85c}.rating-val.hold{color:var(--orange)}.rating-val.sell{color:var(--red)}
+.rating-label{font-size:10px;color:var(--text3);margin-top:2px}
+.target-range{background:linear-gradient(135deg,var(--green-bg),#f0f9f0);border-radius:10px;padding:10px 14px;margin-bottom:6px}
+.target-range-title{font-size:10px;color:var(--green-text);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.target-bars{display:flex;flex-direction:column;gap:4px}
+.target-bar-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.target-bar-row .tbl{width:36px;color:var(--text2);font-size:11px}
+.target-bar-row .tbv{font-family:var(--mono);font-weight:600;min-width:52px;text-align:right}
+.target-bar-row .tbv.max{color:var(--green-text)}.target-bar-row .tbv.avg{color:var(--blue-text)}.target-bar-row .tbv.min{color:var(--red-text)}
+.target-bar-fill{flex:1;height:6px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden}
+.target-bar-inner{height:100%;border-radius:3px}
+/* monthly grid */
 .mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
 .mcell{background:var(--surface2);border-radius:8px;padding:7px 9px}
 .mcell .mm{font-size:10px;color:var(--text3);margin-bottom:2px;font-weight:500}
@@ -82,32 +94,32 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .total-bar{background:var(--green-bg);border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
 .total-bar .tl{font-size:12px;color:var(--green-text);font-weight:500}
 .total-bar .tv{font-size:14px;font-weight:700;color:var(--green-text);font-family:var(--mono)}
-.eps-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:70px;margin:4px 0 6px}
+/* EPS chart bars */
+.eps-bar-wrap{display:flex;align-items:flex-end;gap:4px;height:80px;margin:4px 0 6px}
 .eps-bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
-.eps-bf{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:.3s;background:var(--green)}
-.eps-bf.proj{background:var(--blue);opacity:.7}
-.eps-bf.proj2{background:var(--orange);opacity:.7}
-.eps-by{font-size:9px;color:var(--text3)}
-.eps-bv{font-size:9px;font-weight:600;color:var(--text2);font-family:var(--mono)}
+.eps-bf{width:100%;border-radius:3px 3px 0 0;min-height:3px;background:var(--green)}
+.eps-bf.proj{background:var(--blue);opacity:.7}.eps-bf.proj2{background:var(--orange);opacity:.7}
+.eps-by{font-size:9px;color:var(--text3)}.eps-bv{font-size:9px;font-weight:600;color:var(--text2);font-family:var(--mono)}
+/* PE table */
 .pe-tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
-.pe-tbl th{font-size:10px;font-weight:600;color:var(--text3);padding:5px 8px;text-align:right;border-bottom:.5px solid var(--border);letter-spacing:.3px}
+.pe-tbl th{font-size:10px;font-weight:600;color:var(--text3);padding:5px 8px;text-align:right;border-bottom:.5px solid var(--border)}
 .pe-tbl th:first-child{text-align:left}
 .pe-tbl td{padding:5px 8px;text-align:right;border-bottom:.5px solid var(--bg);font-family:var(--mono)}
 .pe-tbl td:first-child{text-align:left;font-family:var(--font);color:var(--text2)}
 .pe-tbl tr:last-child td{border-bottom:none}
-.pe-tbl .hi{background:var(--green-bg)}
-.pe-tbl .hi td{color:var(--green-text)!important;font-weight:600}
-.pe-tbl .cur{background:var(--orange-bg)}
-.pe-tbl .cur td{color:var(--orange-text)!important}
+.pe-tbl .hi{background:var(--green-bg)}.pe-tbl .hi td{color:var(--green-text)!important;font-weight:600}
+.pe-tbl .cur{background:var(--orange-bg)}.pe-tbl .cur td{color:var(--orange-text)!important}
+/* calculator */
 .calc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .calc-row label{font-size:12px;color:var(--text2);width:38px;flex-shrink:0}
 .calc-row input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border2);outline:none}
 .calc-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.25)}
-.calc-val{font-size:12px;font-weight:600;min-width:52px;text-align:right;font-family:var(--mono)}
+.calc-val{font-size:12px;font-weight:600;min-width:56px;text-align:right;font-family:var(--mono)}
 .target-box{background:var(--accent);border-radius:10px;padding:14px;text-align:center;margin-top:6px}
 .target-box .tl{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
 .target-box .tv{font-size:26px;font-weight:600;color:#fff;letter-spacing:-.8px;font-family:var(--mono)}
 .target-box .tn{font-size:10px;color:rgba(255,255,255,.4);margin-top:3px}
+/* news */
 .news-item{padding:9px 0;border-bottom:.5px solid var(--bg);cursor:pointer}
 .news-item:last-child{border-bottom:none}
 .news-headline{font-size:13px;font-weight:500;line-height:1.4;margin-bottom:3px}
@@ -116,6 +128,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .news-sent.pos{background:var(--green-bg);color:var(--green-text)}
 .news-sent.neg{background:var(--red-bg);color:var(--red-text)}
 .news-sent.neu{background:var(--surface2);color:var(--text3)}
+/* portfolio & alerts */
 .port-section{padding:16px}
 .port-add-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .port-select{flex:1;min-width:100px;padding:8px 10px;border-radius:10px;border:.5px solid var(--border2);background:var(--surface);font-size:13px;font-family:var(--font);color:var(--text);outline:none}
@@ -127,8 +140,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .port-detail{font-size:11px;color:var(--text2);margin-top:2px}
 .port-pnl{font-size:15px;font-weight:600;font-family:var(--mono)}
 .port-pnl.pos{color:var(--green)}.port-pnl.neg{color:var(--red)}
-.port-pnl-pct{font-size:11px}
-.port-pnl-pct.pos{color:var(--green)}.port-pnl-pct.neg{color:var(--red)}
+.port-pnl-pct{font-size:11px}.port-pnl-pct.pos{color:var(--green)}.port-pnl-pct.neg{color:var(--red)}
 .port-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:4px}
 .port-total{background:var(--surface2);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;margin-top:8px}
 .port-total-l{font-size:11px;color:var(--text2);margin-bottom:3px}
@@ -142,6 +154,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .empty-state{text-align:center;padding:50px 20px;color:var(--text3)}
 .empty-icon{font-size:36px;margin-bottom:10px}
 .disclaimer{margin-top:18px;font-size:10px;color:var(--text3);text-align:center;line-height:1.6;padding:0 8px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+.stat-cell{background:var(--surface2);border-radius:8px;padding:8px 10px}
+.stat-cell .sl{font-size:10px;color:var(--text3);margin-bottom:2px}
+.stat-cell .sv{font-size:13px;font-weight:600;font-family:var(--mono)}
 </style>
 </head>
 <body>
@@ -151,11 +167,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zm11 0h7v7h-7zM3 14h7v7H3zm11 3a4 4 0 100-8 4 4 0 000 8z"/></svg></div>
     <span class="nav-title">股票估值</span>
   </div>
-  <div class="nav-right">
-    <div class="pill" id="rate-pill" onclick="refresh()">
-      <div class="dot-live" id="rate-dot"></div>
-      <span id="rate-txt">更新</span>
-    </div>
+  <div class="pill" id="rate-pill" onclick="refresh()">
+    <div class="dot-live" id="rate-dot"></div>
+    <span id="rate-txt">更新</span>
   </div>
 </nav>
 <div class="tabs">
@@ -180,21 +194,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 </div>
 <div id="tab-portfolio" style="display:none">
   <div class="port-section">
-    <div class="sec-t">新增持股</div>
+    <div class="sec-t" style="font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">新增持股</div>
     <div class="port-add-row">
       <select class="port-select" id="p-stock"></select>
       <input class="port-input" id="p-shares" type="number" placeholder="股數" min="1">
       <input class="port-input" id="p-cost" type="number" placeholder="成本" min="1">
       <button class="port-btn" onclick="addHolding()">加入</button>
     </div>
-    <div class="sec-t">持股清單</div>
+    <div class="sec-t" style="font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">持股清單</div>
     <div id="holdings-list"></div>
     <div id="port-summary"></div>
   </div>
 </div>
 <div id="tab-alerts" style="display:none">
   <div class="port-section">
-    <div class="sec-t">新增股價警示</div>
+    <div class="sec-t" style="font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">新增股價警示</div>
     <div class="port-add-row">
       <select class="port-select" id="a-stock"></select>
       <input class="port-input" id="a-price" type="number" placeholder="目標價" min="1">
@@ -204,7 +218,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       </select>
       <button class="port-btn" onclick="addAlert()">設定</button>
     </div>
-    <div class="sec-t">警示清單</div>
+    <div class="sec-t" style="font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">警示清單</div>
     <div id="alerts-list"></div>
   </div>
 </div>
@@ -216,29 +230,91 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="empty-state"><div class="empty-icon">📰</div><div>點選公司載入新聞</div></div>
   </div>
 </div>
-<div class="disclaimer">資料來源：Finnhub、證交所、公開財報及法人共識。本工具僅供投資參考，不構成買賣建議。</div>
+<div class="disclaimer">資料來源：Finnhub、TWSE、TPEX、公開財報及法人共識。僅供投資參考，不構成買賣建議。</div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 const FINNHUB_KEY='d7pmv1hr01qosaap6p70d7pmv1hr01qosaap6p7g';
 const USD_TWD_FALLBACK=31.7;
-let usdTwd=USD_TWD_FALLBACK,compareMode=false,selected=[],priceCache={},currentTab='analyze',newsSelected=null;
+let usdTwd=USD_TWD_FALLBACK,compareMode=false,selected=[],priceCache={},histCache={},ratingCache={},currentTab='analyze',newsSelected=null;
+const chartInstances={};
 
 const COMPANIES={
-  NVDA:{name:'NVIDIA',ticker:'NVDA',sub:'NASDAQ: NVDA',market:'us',data2025:{eps:2.94,epsUnit:'USD',peHigh:65,peAvg:42,maxPrice2025_usd:153.13,note:'FY2025 GAAP EPS $2.94（截至2025年1月）'},epsHistory:[{yr:'2021',v:0.34*31.7},{yr:'2022',v:0.57*31.7},{yr:'2023',v:1.19*31.7},{yr:'2024',v:1.30*31.7},{yr:'2025',v:2.94*31.7},{yr:'2026E',v:3.87*31.7,proj:true},{yr:'2027E',v:5.20*31.7,proj2:true}],q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.05 USD（法人估）',note:'Q1 FY2026 財報2025年5月公布'},eps2026_cons:4.30,eps2026_bear:3.87,peRows:[10,15,18,20,25,28,30],targetPe:28},
-  TSM:{name:'TSMC ADR',ticker:'TSM',sub:'NYSE: TSM',market:'us',data2025:{eps_twd:66.25,peHigh:35,peAvg:25,maxPrice2025_twd:1090,note:'2025全年 EPS NT$66.25，ADR 1股=2普通股'},epsHistory:[{yr:'2021',v:18*31.7/31.7},{yr:'2022',v:32*31.7/31.7},{yr:'2023',v:38*31.7/31.7},{yr:'2024',v:45*31.7/31.7},{yr:'2025',v:66.25},{yr:'2026E',v:77,proj:true},{yr:'2027E',v:95,proj2:true}],q1_2026:{revenue:{'1月':'NT$2,936億','2月':'NT$2,601億','3月':'NT$3,613億'},total:'NT$11,345億',epsEst:'NT$22.08（正式公告）',note:'Q1 2026 EPS NT$22.08，年增58.3%'},eps2026_cons:88,eps2026_bear:77,peRows:[10,15,18,20,25,28,30],targetPe:22},
-  TSMC_TW:{name:'台積電',ticker:'2330.TW',sub:'TWSE: 2330',market:'tw',data2025:{eps_twd:66.25,epsUnit:'NT$',peHigh:35,peAvg:25,maxPrice2025_twd:1090,note:'2025全年 EPS NT$66.25（年增46.4%）'},epsHistory:[{yr:'2021',v:23},{yr:'2022',v:38},{yr:'2023',v:39},{yr:'2024',v:45},{yr:'2025',v:66.25},{yr:'2026E',v:77,proj:true},{yr:'2027E',v:95,proj2:true}],q1_2026:{revenue:{'1月':'NT$2,936億','2月':'NT$2,601億','3月':'NT$3,613億'},total:'NT$11,345億',epsEst:'NT$22.08（正式公告）',note:'Q1 2026 正式公告 EPS NT$22.08，年增58.3%'},eps2026_cons:88,eps2026_bear:77,peRows:[10,15,18,20,25,28,30],targetPe:22},
-  MTK:{name:'聯發科',ticker:'2454.TW',sub:'TWSE: 2454',market:'tw',data2025:{eps_twd:66.16,epsUnit:'NT$',peHigh:30,peAvg:20,maxPrice2025_twd:1800,note:'2025全年 EPS NT$66.16（年減1%）'},epsHistory:[{yr:'2021',v:55},{yr:'2022',v:68},{yr:'2023',v:58},{yr:'2024',v:67},{yr:'2025',v:66.16},{yr:'2026E',v:63,proj:true},{yr:'2027E',v:72,proj2:true}],q1_2026:{revenue:{'1月':'NT$1,241億','2月':'NT$1,074億','3月':'NT$1,502億'},total:'NT$3,817億',epsEst:'NT$14~16（法人預估）',note:'Q1 2026 財報預計2026年5月公布'},eps2026_cons:72,eps2026_bear:63,peRows:[10,15,18,20,25,28,30],targetPe:18},
-  PHISON:{name:'群聯',ticker:'8299.TWO',sub:'TPEX: 8299',market:'tw',data2025:{eps_twd:41.98,epsUnit:'NT$',peHigh:60,peAvg:38,maxPrice2025_twd:2465,note:'2025全年 EPS NT$41.98（年增54%）'},epsHistory:[{yr:'2021',v:22},{yr:'2022',v:19},{yr:'2023',v:27},{yr:'2024',v:27},{yr:'2025',v:41.98},{yr:'2026E',v:68,proj:true},{yr:'2027E',v:82,proj2:true}],q1_2026:{revenue:{'1月':'NT$120.2億','2月':'NT$106.3億','3月':'NT$183.2億'},total:'NT$409.7億',epsEst:'NT$46~50（法人預估）',note:'Q1 2026 財報2026年5月13日公布\nQ4 2025 EPS NT$22.23（優於預期10%）'},eps2026_cons:80,eps2026_bear:68,peRows:[10,15,18,20,25,28,30],targetPe:25},
-  AMD:{name:'AMD',ticker:'AMD',sub:'NASDAQ: AMD',market:'us',data2025:{eps:3.31,epsUnit:'USD',peHigh:60,peAvg:35,maxPrice2025_usd:187,note:'2025 Non-GAAP EPS ~$3.31'},epsHistory:[{yr:'2021',v:2.79*31.7},{yr:'2022',v:0.84*31.7},{yr:'2023',v:2.65*31.7},{yr:'2024',v:3.31*31.7},{yr:'2025',v:3.31*31.7},{yr:'2026E',v:4.68*31.7,proj:true},{yr:'2027E',v:6.50*31.7,proj2:true}],q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.57 USD（法人估）',note:'Q1 2026 財報已公布'},eps2026_cons:5.20,eps2026_bear:4.68,peRows:[10,15,18,20,25,28,30],targetPe:25},
-  APPLE:{name:'Apple',ticker:'AAPL',sub:'NASDAQ: AAPL',market:'us',data2025:{eps:6.97,epsUnit:'USD',peHigh:35,peAvg:27,maxPrice2025_usd:260,note:'FY2025 EPS $6.97（截至2025年9月）'},epsHistory:[{yr:'2021',v:5.61*31.7},{yr:'2022',v:6.11*31.7},{yr:'2023',v:6.13*31.7},{yr:'2024',v:6.08*31.7},{yr:'2025',v:6.97*31.7},{yr:'2026E',v:6.75*31.7,proj:true},{yr:'2027E',v:7.50*31.7,proj2:true}],q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.65 USD（法人估）',note:'Q1 FY2026已公布'},eps2026_cons:7.50,eps2026_bear:6.75,peRows:[10,15,18,20,25,28,30],targetPe:27},
-  META:{name:'Meta',ticker:'META',sub:'NASDAQ: META',market:'us',data2025:{eps:23.86,epsUnit:'USD',peHigh:30,peAvg:22,maxPrice2025_usd:740,note:'2025全年 EPS $23.86'},epsHistory:[{yr:'2021',v:13.77*31.7},{yr:'2022',v:8.59*31.7},{yr:'2023',v:14.87*31.7},{yr:'2024',v:23.86*31.7},{yr:'2025',v:23.86*31.7},{yr:'2026E',v:25.65*31.7,proj:true},{yr:'2027E',v:30*31.7,proj2:true}],q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$6.20 USD（法人估）',note:'Q1 2026財報已公布'},eps2026_cons:28.5,eps2026_bear:25.65,peRows:[10,15,18,20,25,28,30],targetPe:22},
-  UMC:{name:'聯電',ticker:'2303.TW',sub:'TWSE: 2303',market:'tw',data2025:{eps_twd:3.05,epsUnit:'NT$',peHigh:20,peAvg:13,maxPrice2025_twd:52,note:'2025全年 EPS NT$3.05'},epsHistory:[{yr:'2021',v:4.2},{yr:'2022',v:5.8},{yr:'2023',v:3.5},{yr:'2024',v:3.1},{yr:'2025',v:3.05},{yr:'2026E',v:2.88,proj:true},{yr:'2027E',v:3.5,proj2:true}],q1_2026:{revenue:{'1月':'NT$231億','2月':'NT$198億','3月':'NT$249億'},total:'NT$678億',epsEst:'NT$0.75（法人估）',note:'Q1 2026 營收年增約8%'},eps2026_cons:3.20,eps2026_bear:2.88,peRows:[10,15,18,20,25,28,30],targetPe:13},
-  WINBOND:{name:'華邦電',ticker:'2344.TW',sub:'TWSE: 2344',market:'tw',data2025:{eps_twd:0.82,epsUnit:'NT$',peHigh:40,peAvg:22,maxPrice2025_twd:22,note:'2025全年 EPS NT$0.82'},epsHistory:[{yr:'2021',v:2.1},{yr:'2022',v:1.2},{yr:'2023',v:-0.5},{yr:'2024',v:0.3},{yr:'2025',v:0.82},{yr:'2026E',v:1.35,proj:true},{yr:'2027E',v:2.0,proj2:true}],q1_2026:{revenue:{'1月':'NT$81億','2月':'NT$69億','3月':'NT$88億'},total:'NT$238億',epsEst:'NT$0.25（法人估）',note:'記憶體景氣回升'},eps2026_cons:1.50,eps2026_bear:1.35,peRows:[10,15,18,20,25,28,30],targetPe:22},
+  NVDA:{name:'NVIDIA',ticker:'NVDA',fhTicker:'NVDA',sub:'NASDAQ: NVDA',market:'us',
+    data2025:{eps:2.94,epsUnit:'USD',peHigh:65,peAvg:42,maxPrice2025_usd:153.13,note:'FY2025 GAAP EPS $2.94（截至2025年1月）'},
+    analystTarget:{min:90,avg:163,max:220,count:14,strongBuy:28,buy:10,hold:4,sell:0},
+    epsHistory:[{yr:'2021',v:0.34},{yr:'2022',v:0.57},{yr:'2023',v:1.19},{yr:'2024',v:1.30},{yr:'2025',v:2.94},{yr:'2026E',v:3.87,proj:true},{yr:'2027E',v:5.20,proj2:true}],
+    q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.05 USD（法人估）',note:'Q1 FY2026 財報2025年5月公布'},
+    eps2026_cons:4.30,eps2026_bear:3.87,peRows:[10,15,18,20,25,28,30],targetPe:28,
+    mktcap:'NT$92兆',vol:'~3億股/日'},
+  TSM:{name:'TSMC ADR',ticker:'TSM',fhTicker:'TSM',sub:'NYSE: TSM',market:'us',
+    data2025:{eps_twd:66.25,peHigh:35,peAvg:25,maxPrice2025_twd:1090,note:'2025全年 EPS NT$66.25，ADR 1股=2普通股'},
+    analystTarget:{min:160,avg:228,max:290,count:14,strongBuy:18,buy:5,hold:2,sell:0},
+    epsHistory:[{yr:'2021',v:23},{yr:'2022',v:38},{yr:'2023',v:39},{yr:'2024',v:45},{yr:'2025',v:66.25},{yr:'2026E',v:77,proj:true},{yr:'2027E',v:95,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$2,936億','2月':'NT$2,601億','3月':'NT$3,613億'},total:'NT$11,345億',epsEst:'NT$22.08（正式公告）',note:'Q1 2026 EPS NT$22.08，年增58.3%'},
+    eps2026_cons:88,eps2026_bear:77,peRows:[10,15,18,20,25,28,30],targetPe:22,
+    mktcap:'NT$21兆',vol:'~1500萬股/日'},
+  TSMC_TW:{name:'台積電',ticker:'2330.TW',fhTicker:null,sub:'TWSE: 2330',market:'tw',
+    data2025:{eps_twd:66.25,epsUnit:'NT$',peHigh:35,peAvg:25,maxPrice2025_twd:1090,note:'2025全年 EPS NT$66.25（年增46.4%）'},
+    analystTarget:{min:900,avg:1213,max:1500,count:26,strongBuy:20,buy:5,hold:1,sell:0},
+    epsHistory:[{yr:'2021',v:23},{yr:'2022',v:38},{yr:'2023',v:39},{yr:'2024',v:45},{yr:'2025',v:66.25},{yr:'2026E',v:77,proj:true},{yr:'2027E',v:95,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$2,936億','2月':'NT$2,601億','3月':'NT$3,613億'},total:'NT$11,345億',epsEst:'NT$22.08（正式公告）',note:'Q1 2026 正式公告 EPS NT$22.08，年增58.3%'},
+    eps2026_cons:88,eps2026_bear:77,peRows:[10,15,18,20,25,28,30],targetPe:22,
+    mktcap:'NT$21兆',vol:'~5萬張/日'},
+  MTK:{name:'聯發科',ticker:'2454.TW',fhTicker:null,sub:'TWSE: 2454',market:'tw',
+    data2025:{eps_twd:66.16,epsUnit:'NT$',peHigh:30,peAvg:20,maxPrice2025_twd:1800,note:'2025全年 EPS NT$66.16（年減1%）'},
+    analystTarget:{min:1000,avg:1350,max:1700,count:18,strongBuy:12,buy:4,hold:2,sell:0},
+    epsHistory:[{yr:'2021',v:55},{yr:'2022',v:68},{yr:'2023',v:58},{yr:'2024',v:67},{yr:'2025',v:66.16},{yr:'2026E',v:63,proj:true},{yr:'2027E',v:72,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$1,241億','2月':'NT$1,074億','3月':'NT$1,502億'},total:'NT$3,817億',epsEst:'NT$14~16（法人預估）',note:'Q1 2026 財報預計2026年5月公布'},
+    eps2026_cons:72,eps2026_bear:63,peRows:[10,15,18,20,25,28,30],targetPe:18,
+    mktcap:'NT$1.7兆',vol:'~2萬張/日'},
+  PHISON:{name:'群聯',ticker:'8299.TWO',fhTicker:null,sub:'TPEX: 8299',market:'tw',
+    data2025:{eps_twd:41.98,epsUnit:'NT$',peHigh:60,peAvg:38,maxPrice2025_twd:2465,note:'2025全年 EPS NT$41.98（年增54%）'},
+    analystTarget:{min:1800,avg:2430,max:3000,count:14,strongBuy:10,buy:3,hold:1,sell:0},
+    epsHistory:[{yr:'2021',v:22},{yr:'2022',v:19},{yr:'2023',v:27},{yr:'2024',v:27},{yr:'2025',v:41.98},{yr:'2026E',v:68,proj:true},{yr:'2027E',v:82,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$120.2億','2月':'NT$106.3億','3月':'NT$183.2億'},total:'NT$409.7億',epsEst:'NT$46~50（法人預估）',note:'Q1 2026 財報2026年5月13日公布\nQ4 2025 EPS NT$22.23（優於預期10%）'},
+    eps2026_cons:80,eps2026_bear:68,peRows:[10,15,18,20,25,28,30],targetPe:25,
+    mktcap:'NT$5,070億',vol:'~5千張/日'},
+  AMD:{name:'AMD',ticker:'AMD',fhTicker:'AMD',sub:'NASDAQ: AMD',market:'us',
+    data2025:{eps:3.31,epsUnit:'USD',peHigh:60,peAvg:35,maxPrice2025_usd:187,note:'2025 Non-GAAP EPS ~$3.31'},
+    analystTarget:{min:90,avg:148,max:250,count:36,strongBuy:20,buy:10,hold:6,sell:0},
+    epsHistory:[{yr:'2021',v:2.79},{yr:'2022',v:0.84},{yr:'2023',v:2.65},{yr:'2024',v:3.31},{yr:'2025',v:3.31},{yr:'2026E',v:4.68,proj:true},{yr:'2027E',v:6.50,proj2:true}],
+    q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.57 USD（法人估）',note:'Q1 2026 財報已公布'},
+    eps2026_cons:5.20,eps2026_bear:4.68,peRows:[10,15,18,20,25,28,30],targetPe:25,
+    mktcap:'NT$8兆',vol:'~5千萬股/日'},
+  APPLE:{name:'Apple',ticker:'AAPL',fhTicker:'AAPL',sub:'NASDAQ: AAPL',market:'us',
+    data2025:{eps:6.97,epsUnit:'USD',peHigh:35,peAvg:27,maxPrice2025_usd:260,note:'FY2025 EPS $6.97（截至2025年9月）'},
+    analystTarget:{min:175,avg:240,max:325,count:40,strongBuy:22,buy:8,hold:9,sell:1},
+    epsHistory:[{yr:'2021',v:5.61},{yr:'2022',v:6.11},{yr:'2023',v:6.13},{yr:'2024',v:6.08},{yr:'2025',v:6.97},{yr:'2026E',v:6.75,proj:true},{yr:'2027E',v:7.50,proj2:true}],
+    q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$1.65 USD（法人估）',note:'Q1 FY2026已公布'},
+    eps2026_cons:7.50,eps2026_bear:6.75,peRows:[10,15,18,20,25,28,30],targetPe:27,
+    mktcap:'NT$112兆',vol:'~5千萬股/日'},
+  META:{name:'Meta',ticker:'META',fhTicker:'META',sub:'NASDAQ: META',market:'us',
+    data2025:{eps:23.86,epsUnit:'USD',peHigh:30,peAvg:22,maxPrice2025_usd:740,note:'2025全年 EPS $23.86'},
+    analystTarget:{min:430,avg:700,max:935,count:44,strongBuy:30,buy:10,hold:4,sell:0},
+    epsHistory:[{yr:'2021',v:13.77},{yr:'2022',v:8.59},{yr:'2023',v:14.87},{yr:'2024',v:23.86},{yr:'2025',v:23.86},{yr:'2026E',v:25.65,proj:true},{yr:'2027E',v:30,proj2:true}],
+    q1_2026:{revenue:{},totalLabel:'按季揭露',epsEst:'~$6.20 USD（法人估）',note:'Q1 2026財報已公布'},
+    eps2026_cons:28.5,eps2026_bear:25.65,peRows:[10,15,18,20,25,28,30],targetPe:22,
+    mktcap:'NT$68兆',vol:'~1千萬股/日'},
+  UMC:{name:'聯電',ticker:'2303.TW',fhTicker:null,sub:'TWSE: 2303',market:'tw',
+    data2025:{eps_twd:3.05,epsUnit:'NT$',peHigh:20,peAvg:13,maxPrice2025_twd:52,note:'2025全年 EPS NT$3.05'},
+    analystTarget:{min:35,avg:46,max:60,count:12,strongBuy:5,buy:4,hold:3,sell:0},
+    epsHistory:[{yr:'2021',v:4.2},{yr:'2022',v:5.8},{yr:'2023',v:3.5},{yr:'2024',v:3.1},{yr:'2025',v:3.05},{yr:'2026E',v:2.88,proj:true},{yr:'2027E',v:3.5,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$231億','2月':'NT$198億','3月':'NT$249億'},total:'NT$678億',epsEst:'NT$0.75（法人估）',note:'Q1 2026 營收年增約8%'},
+    eps2026_cons:3.20,eps2026_bear:2.88,peRows:[10,15,18,20,25,28,30],targetPe:13,
+    mktcap:'NT$2,700億',vol:'~3萬張/日'},
+  WINBOND:{name:'華邦電',ticker:'2344.TW',fhTicker:null,sub:'TWSE: 2344',market:'tw',
+    data2025:{eps_twd:0.82,epsUnit:'NT$',peHigh:40,peAvg:22,maxPrice2025_twd:22,note:'2025全年 EPS NT$0.82'},
+    analystTarget:{min:16,avg:22,max:30,count:8,strongBuy:4,buy:2,hold:2,sell:0},
+    epsHistory:[{yr:'2021',v:2.1},{yr:'2022',v:1.2},{yr:'2023',v:-0.5},{yr:'2024',v:0.3},{yr:'2025',v:0.82},{yr:'2026E',v:1.35,proj:true},{yr:'2027E',v:2.0,proj2:true}],
+    q1_2026:{revenue:{'1月':'NT$81億','2月':'NT$69億','3月':'NT$88億'},total:'NT$238億',epsEst:'NT$0.25（法人估）',note:'記憶體景氣回升'},
+    eps2026_cons:1.50,eps2026_bear:1.35,peRows:[10,15,18,20,25,28,30],targetPe:22,
+    mktcap:'NT$390億',vol:'~1萬張/日'},
 };
 
 const fmtNT=(v,d=0)=>v==null?'—':'NT$'+Number(v).toLocaleString('zh-TW',{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtUSD=(v,d=2)=>v==null?'—':'$'+Number(v).toFixed(d);
-const fmtNum=(v,d=0)=>v==null?'—':Number(v).toLocaleString('zh-TW',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtNum=(v,d=0)=>Number(v).toLocaleString('zh-TW',{minimumFractionDigits:d,maximumFractionDigits:d});
 
 function switchTab(tab,btn){
   currentTab=tab;
@@ -250,67 +326,299 @@ function switchTab(tab,btn){
   if(tab==='news') renderNewsChips();
 }
 
+// RATE
 async function fetchRate(){
   const pill=document.getElementById('rate-pill'),dot=document.getElementById('rate-dot'),txt=document.getElementById('rate-txt');
   pill.style.opacity='0.6';
   try{
     const r=await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json');
-    if(!r.ok)throw new Error();
     const d=await r.json();usdTwd=d.usd?.twd||USD_TWD_FALLBACK;
     txt.textContent='1 USD = NT$'+usdTwd.toFixed(2);dot.className='dot-live on';
   }catch{usdTwd=USD_TWD_FALLBACK;txt.textContent='NT$'+USD_TWD_FALLBACK;dot.className='dot-live';}
   pill.style.opacity='1';
 }
 
+// PRICE
 async function fetchPriceTW(ticker){
   const isTWO=ticker.endsWith('.TWO');
   const code=isTWO?ticker.replace('.TWO',''):ticker.replace('.TW','');
-  if(!isTWO){try{const r=await fetch(`https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_${code}.tw&json=1&delay=0`);if(!r.ok)throw new Error();const d=await r.json();const info=d?.msgArray?.[0];if(!info||!info.z||info.z==='-')throw new Error();const price=parseFloat(info.z);const prev=parseFloat(info.y)||price;return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};}catch{}}
-  if(isTWO){try{const r=await fetch(`https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes?stockNo=${code}`);if(!r.ok)throw new Error();const d=await r.json();const info=d?.[0];if(!info)throw new Error();const price=parseFloat(info.ClosingPrice||info.LatestPrice);const prev=parseFloat(info.PreviousClose)||price;if(!price)throw new Error();return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};}catch{}}
-  try{const sym=encodeURIComponent(ticker);const r=await fetch(`https://corsproxy.io/?https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=1d`);if(!r.ok)throw new Error();const d=await r.json();const meta=d?.chart?.result?.[0]?.meta;if(!meta?.regularMarketPrice)throw new Error();const price=meta.regularMarketPrice;const prev=meta.chartPreviousClose||meta.previousClose||price;return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};}catch{}
+
+  // Yahoo Finance via corsproxy (most reliable for both TWSE & TPEX)
+  try{
+    const sym=encodeURIComponent(ticker);
+    const r=await fetch('https://corsproxy.io/?'+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+sym+'?interval=1d&range=1d'));
+    const d=await r.json();const meta=d?.chart?.result?.[0]?.meta;
+    if(meta?.regularMarketPrice){
+      const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||meta.previousClose||price;
+      return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};
+    }
+  }catch{}
+
+  // TWSE official
+  if(!isTWO){
+    try{
+      const r=await fetch('https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=tse_'+code+'.tw&json=1&delay=0');
+      const d=await r.json();const info=d?.msgArray?.[0];
+      if(info&&info.z&&info.z!=='-'){
+        const price=parseFloat(info.z),prev=parseFloat(info.y)||price;
+        return{price,change:price-prev,changePct:(price-prev)/prev*100,prevClose:prev};
+      }
+    }catch{}
+  }
+
+  // TPEX official
+  if(isTWO){
+    try{
+      const r=await fetch('https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes?stockNo='+code);
+      const d=await r.json();const info=d?.[0];
+      if(info){
+        const price=parseFloat(info.ClosingPrice||info.LatestPrice);
+        const prev=parseFloat(info.PreviousClose)||price;
+        if(price) return{price,change:price-prev,changePct:(price-prev)/prev*100,prevClose:prev};
+      }
+    }catch{}
+  }
+
+  // allorigins fallback
+  try{
+    const sym=encodeURIComponent(ticker);
+    const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://query2.finance.yahoo.com/v8/finance/chart/'+sym+'?interval=1d&range=1d'));
+    const d=await r.json();const meta=d?.chart?.result?.[0]?.meta;
+    if(meta?.regularMarketPrice){
+      const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||price;
+      return{price,change:price-prev,changePct:prev?(price-prev)/prev*100:0,prevClose:prev};
+    }
+  }catch{}
+
   return null;
 }
 
 async function fetchPriceUS(ticker){
-  if(!FINNHUB_KEY||FINNHUB_KEY.length<10)return null;
-  try{const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_KEY}`);if(!r.ok)throw new Error();const d=await r.json();if(!d.c)throw new Error();return{price:d.c,change:d.d,changePct:d.dp,prevClose:d.pc};}catch{return null;}
+  try{
+    const r=await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(ticker)}&token=${FINNHUB_KEY}`);
+    const d=await r.json();if(!d.c) throw new Error();
+    return{price:d.c,change:d.d,changePct:d.dp,prevClose:d.pc};
+  }catch{return null;}
 }
 
 async function fetchPrice(ticker,market){
   const now=Date.now();
-  if(priceCache[ticker]&&now-priceCache[ticker].ts<60000)return priceCache[ticker].data;
+  if(priceCache[ticker]&&now-priceCache[ticker].ts<60000) return priceCache[ticker].data;
   const result=market==='tw'?await fetchPriceTW(ticker):await fetchPriceUS(ticker);
-  if(result)priceCache[ticker]={data:result,ts:now};
+  if(result) priceCache[ticker]={data:result,ts:now};
   return result;
 }
 
+// HISTORY CHART
+async function fetchHistory(id){
+  const c=COMPANIES[id];
+  if(histCache[id]) return histCache[id];
+  const market=c.market;
+  const ticker=c.ticker;
+  let prices=[];
+  try{
+    if(market==='us'){
+      const to=Math.floor(Date.now()/1000);
+      const from=to-365*24*3600;
+      const r=await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=W&from=${from}&to=${to}&token=${FINNHUB_KEY}`);
+      const d=await r.json();
+      if(d.s==='ok'&&d.c){prices=d.t.map((t,i)=>({t:t*1000,p:d.c[i]}));}
+    } else {
+      const code=ticker.replace('.TW','').replace('.TWO','');
+      const isTWO=ticker.endsWith('.TWO');
+      const today=new Date();
+      const dates=[];
+      for(let i=11;i>=0;i--){
+        const d=new Date(today.getFullYear(),today.getMonth()-i,1);
+        dates.push(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`);
+      }
+      for(const ym of dates.slice(-6)){
+        try{
+          let url,key;
+          if(!isTWO){url=`https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=${ym}01&stockNo=${code}&response=json`;key='data';}
+          else{url=`https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes?date=${ym.slice(0,4)}-${ym.slice(4)}-01`;key=null;}
+          const r=await fetch(url);const d=await r.json();
+          const rows=key?d[key]:d;
+          if(rows&&rows.length){
+            rows.forEach(row=>{
+              if(!isTWO){
+                const dt=row[0].replace(/\//g,'-');const close=parseFloat(row[6].replace(/,/g,''));
+                if(!isNaN(close)) prices.push({t:new Date('19110101').getTime()+parseInt(dt.split('-')[0])*365.25*86400000,label:dt,p:close});
+              }
+            });
+          }
+        }catch{}
+      }
+      // Simpler fallback: just use recent prices from corsproxy Yahoo
+      if(prices.length<5){
+        try{
+          const sym=encodeURIComponent(ticker);
+          const r=await fetch(`https://corsproxy.io/?https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1wk&range=1y`);
+          const d=await r.json();
+          const res=d?.chart?.result?.[0];
+          if(res){
+            const ts=res.timestamps||[];const cs=res.indicators?.quote?.[0]?.close||[];
+            prices=ts.map((t,i)=>({t:t*1000,p:cs[i]})).filter(x=>x.p);
+          }
+        }catch{}
+      }
+    }
+  }catch{}
+  histCache[id]=prices;
+  return prices;
+}
+
+// DRAW CHART
+async function drawChart(id,canvasId){
+  const c=COMPANIES[id];
+  const ctx=document.getElementById(canvasId);
+  if(!ctx) return;
+  if(chartInstances[canvasId]){chartInstances[canvasId].destroy();delete chartInstances[canvasId];}
+  ctx.getContext('2d').clearRect(0,0,ctx.width,ctx.height);
+
+  // Show loading
+  const parent=ctx.parentElement;
+  let loadDiv=parent.querySelector('.chart-loading');
+  if(!loadDiv){loadDiv=document.createElement('div');loadDiv.className='chart-loading';loadDiv.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;color:var(--text3)';loadDiv.textContent='載入走勢中…';parent.style.position='relative';parent.appendChild(loadDiv);}
+
+  const hist=await fetchHistory(id);
+  if(loadDiv) loadDiv.remove();
+
+  const isUS=c.market==='us';
+  const at=c.analystTarget;
+  const curPriceData=priceCache[c.ticker]?.data;
+  const curPrice=curPriceData?(isUS?curPriceData.price*usdTwd:curPriceData.price):null;
+
+  // Build labels and data
+  let labels=[],data=[];
+  if(hist.length>0){
+    hist.forEach(h=>{
+      const dt=new Date(h.t);
+      labels.push(`${dt.getFullYear()}/${dt.getMonth()+1}`);
+      data.push(isUS?+(h.p*usdTwd).toFixed(0):+h.p.toFixed(0));
+    });
+  } else {
+    labels=['無資料'];data=[curPrice||0];
+  }
+
+  // Forecast zone (next 4 points)
+  const forecastLabels=['Now','3M','6M','12M'];
+  const forecastAvg=at?[curPrice,curPrice+(at.avg*usdTwd-curPrice)*0.3,curPrice+(at.avg*usdTwd-curPrice)*0.7,at.avg*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
+  const forecastMax=at?[curPrice,curPrice+(at.max*(isUS?usdTwd:1)-curPrice)*0.3,curPrice+(at.max*(isUS?usdTwd:1)-curPrice)*0.7,at.max*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
+  const forecastMin=at?[curPrice,curPrice+(at.min*(isUS?usdTwd:1)-curPrice)*0.3,curPrice+(at.min*(isUS?usdTwd:1)-curPrice)*0.7,at.min*(isUS?usdTwd:1)].map(v=>v?+v.toFixed(0):null):[];
+
+  const allLabels=[...labels,...forecastLabels.slice(1)];
+  const nullPad=new Array(labels.length-1).fill(null);
+
+  const datasets=[{
+    label:'股價走勢',
+    data:[...data,...new Array(forecastLabels.length-1).fill(null)],
+    borderColor:'#378add',borderWidth:2,pointRadius:0,fill:true,
+    backgroundColor:(ctx2)=>{const g=ctx2.chart.ctx.createLinearGradient(0,0,0,200);g.addColorStop(0,'rgba(55,138,221,0.15)');g.addColorStop(1,'rgba(55,138,221,0)');return g;},
+    tension:0.3
+  }];
+
+  if(at&&curPrice){
+    datasets.push({label:'法人目標（樂觀）',data:[...nullPad,...forecastMax],borderColor:'rgba(29,158,117,0.7)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0.3});
+    datasets.push({label:'法人目標（平均）',data:[...nullPad,...forecastAvg],borderColor:'rgba(55,138,221,0.8)',borderWidth:2,borderDash:[4,3],pointRadius:4,fill:false,tension:0.3});
+    datasets.push({label:'法人目標（保守）',data:[...nullPad,...forecastMin],borderColor:'rgba(226,75,74,0.7)',borderWidth:1.5,borderDash:[4,3],pointRadius:0,fill:false,tension:0.3});
+  }
+
+  chartInstances[canvasId]=new Chart(ctx,{
+    type:'line',
+    data:{labels:allLabels,datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtNT(c.parsed.y,0)}`}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{color:'#aeaeb2',font:{size:9},maxTicksLimit:8}},
+        y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#aeaeb2',font:{size:9},callback:v=>'NT$'+Math.round(v/1000)+'k'}}
+      }
+    }
+  });
+}
+
 function getSignal(id,price){
-  const c=COMPANIES[id];const bearEps=c.eps2026_bear;
-  if(!price||!bearEps)return null;
-  const livePe=price/bearEps;const peAvg=c.data2025.peAvg;
+  const c=COMPANIES[id];const bearEps=c.eps2026_bear;const isUS=c.market==='us';
+  const epsInTwd=isUS?bearEps*usdTwd:bearEps;
+  if(!price||!epsInTwd) return null;
+  const livePe=price/epsInTwd;const peAvg=c.data2025.peAvg;
   const maxP=c.data2025.maxPrice2025_twd||((c.data2025.maxPrice2025_usd||0)*usdTwd);
   const drop=maxP?(price-maxP)/maxP*100:0;
   const val=livePe<peAvg*0.85?'cheap':livePe>peAvg*1.15?'expensive':'fair';
-  const dropSignal=drop<=-20?{msg:`距高點跌 ${Math.abs(drop).toFixed(0)}%`}:null;
-  return{livePe,val,dropSignal};
+  return{livePe,val,drop};
 }
 
 function buildCard(id){
   const c=COMPANIES[id],d=c.data2025,q=c.q1_2026,isUS=c.market==='us',bearEps=c.eps2026_bear;
+  const epsInTwd=isUS?bearEps*usdTwd:bearEps;
   const eps25=isUS?fmtNT((d.eps||0)*usdTwd,0):fmtNT(d.eps_twd,2);
   const eps25s=isUS?`(${fmtUSD(d.eps)} USD)`:'';
   const maxP=isUS?fmtNT((d.maxPrice2025_usd||0)*usdTwd,0):fmtNT(d.maxPrice2025_twd,0);
-  const hist=c.epsHistory||[];const maxV=Math.max(...hist.map(h=>Math.abs(h.v)))*1.2||1;
-  const chartHtml=hist.map(h=>`<div class="eps-bc"><div class="eps-bv">${Math.abs(h.v)<10?h.v.toFixed(1):Math.round(h.v)}</div><div class="eps-bf${h.proj?' proj':h.proj2?' proj2':''}" style="height:${(Math.max(h.v,0)/maxV*55).toFixed(0)}px"></div><div class="eps-by">${h.yr}</div></div>`).join('');
+
+  // EPS history bars (in TWD for display)
+  const hist=c.epsHistory||[];
+  const histTwd=hist.map(h=>({...h,vt:isUS?h.v*usdTwd:h.v}));
+  const maxV=Math.max(...histTwd.map(h=>Math.abs(h.vt)))*1.2||1;
+  const chartHtml=histTwd.map(h=>`<div class="eps-bc"><div class="eps-bv">${Math.abs(h.vt)<100?h.vt.toFixed(0):Math.round(h.vt/100)+'h'}</div><div class="eps-bf${h.proj?' proj':h.proj2?' proj2':''}" style="height:${(Math.max(h.vt,0)/maxV*65).toFixed(0)}px"></div><div class="eps-by">${h.yr}</div></div>`).join('');
+
+  // Monthly revenue
   const entries=Object.entries(q.revenue||{});
-  const monthHtml=entries.length&&entries.some(([,v])=>v)?'<div class="mgrid">'+entries.map(([m,v])=>`<div class="mcell"><div class="mm">${m}</div><div class="mv">${v||'—'}</div></div>`).join('')+'</div>':`<p style="font-size:12px;color:var(--text3);padding:4px 0">${q.totalLabel||'月度數據按季公告'}</p>`;
+  const monthHtml=entries.length&&entries.some(([,v])=>v)?'<div class="mgrid">'+entries.map(([m,v])=>`<div class="mcell"><div class="mm">${m}</div><div class="mv">${v||'—'}</div></div>`).join('')+'</div>':`<p style="font-size:12px;color:var(--text3);padding:4px 0">${q.totalLabel||'月度按季公告'}</p>`;
   const totalHtml=q.total?`<div class="total-bar"><span class="tl">Q1 2026 累計</span><span class="tv">${q.total}</span></div>`:'';
-  const peRows=c.peRows.map(pe=>{const p=bearEps*pe;const isT=pe===c.targetPe;return`<tr class="${isT?'hi':''}" id="pe-row-${id}-${pe}"><td>PE ${pe}x${isT?' ★':''}</td><td>${fmtNT(bearEps,1)}</td><td>${fmtNT(p,0)}</td></tr>`;}).join('');
-  const initEps=Math.round(bearEps),initPe=c.targetPe,slMax=Math.round(bearEps*2.5);
+
+  // Analyst target
+  const at=c.analystTarget;
+  const atCurrency=isUS?'USD':'NT$';
+  const atMax=isUS?fmtUSD(at.max):fmtNT(at.max);
+  const atAvg=isUS?fmtUSD(at.avg):fmtNT(at.avg);
+  const atMin=isUS?fmtUSD(at.min):fmtNT(at.min);
+  const totalRating=at.strongBuy+at.buy+at.hold+at.sell;
+  const sbPct=Math.round(at.strongBuy/totalRating*100);
+  const ratingLabel=at.strongBuy/totalRating>0.5?'Strong Buy':at.strongBuy/totalRating>0.3?'Buy':'Hold';
+  const ratingCls=ratingLabel==='Strong Buy'?'strong-buy':ratingLabel==='Buy'?'buy':'hold';
+
+  // PE rows
+  const peRows=c.peRows.map(pe=>{const p=epsInTwd*pe;const isT=pe===c.targetPe;return`<tr class="${isT?'hi':''}" id="pe-row-${id}-${pe}"><td>PE ${pe}x${isT?' ★':''}</td><td>${fmtNT(epsInTwd,1)}</td><td>${fmtNT(p,0)}</td></tr>`;}).join('');
+
+  const initEps=Math.round(epsInTwd),initPe=c.targetPe,slMax=Math.max(Math.round(epsInTwd*3),initEps+50);
+  const canvasId=`chart-${id}`;
+
   const div=document.createElement('div');div.className='card';
   div.innerHTML=`
     <div class="c-head"><div><div class="c-name">${c.name}</div><div class="c-ticker">${c.sub}</div></div><span class="badge ${c.market}">${isUS?'美股':'台股'}</span></div>
     <div class="price-row" id="price-block-${id}"><span class="price-loading">載入股價中…</span></div>
+    <div class="sec">
+      <div class="sec-t">股價走勢 + 法人預測區間</div>
+      <div class="chart-wrap"><canvas id="${canvasId}"></canvas></div>
+      <div style="display:flex;gap:10px;font-size:10px;color:var(--text3);margin-top:4px;flex-wrap:wrap">
+        <span><span style="display:inline-block;width:20px;height:2px;background:#378add;vertical-align:middle"></span> 走勢</span>
+        <span><span style="display:inline-block;width:20px;height:2px;background:rgba(29,158,117,.7);vertical-align:middle;border-top:2px dashed rgba(29,158,117,.7)"></span> 樂觀</span>
+        <span><span style="display:inline-block;width:20px;height:2px;background:rgba(55,138,221,.8);vertical-align:middle;border-top:2px dashed rgba(55,138,221,.8)"></span> 平均</span>
+        <span><span style="display:inline-block;width:20px;height:2px;background:rgba(226,75,74,.7);vertical-align:middle;border-top:2px dashed rgba(226,75,74,.7)"></span> 保守</span>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">法人目標價 & 評等</div>
+      <div class="target-range">
+        <div class="target-range-title">分析師目標價（${at.count}位）</div>
+        <div class="target-bars">
+          <div class="target-bar-row"><span class="tbl">最高</span><div class="target-bar-fill"><div class="target-bar-inner" style="width:100%;background:rgba(29,158,117,.3)"></div></div><span class="tbv max">${atMax}</span></div>
+          <div class="target-bar-row"><span class="tbl">平均</span><div class="target-bar-fill"><div class="target-bar-inner" style="width:${Math.round((at.avg-at.min)/(at.max-at.min)*100)}%;background:rgba(55,138,221,.5)"></div></div><span class="tbv avg">${atAvg}</span></div>
+          <div class="target-bar-row"><span class="tbl">最低</span><div class="target-bar-fill"><div class="target-bar-inner" style="width:20%;background:rgba(226,75,74,.3)"></div></div><span class="tbv min">${atMin}</span></div>
+        </div>
+      </div>
+      <div class="rating-box">
+        <div class="rating-item"><div class="rating-val ${ratingCls}">${ratingLabel}</div><div class="rating-label">整體評等</div></div>
+        <div class="rating-item"><div class="rating-val" style="color:var(--green)">${sbPct}%</div><div class="rating-label">強力買入佔比</div></div>
+        <div class="rating-item"><div class="rating-val" style="font-size:14px">${at.strongBuy}/${at.buy}/${at.hold}/${at.sell}</div><div class="rating-label">強買/買/持有/賣</div></div>
+        <div class="rating-item"><div class="rating-val" style="font-size:14px">${c.mktcap||'—'}</div><div class="rating-label">市值</div></div>
+      </div>
+    </div>
     <div class="sec"><div class="sec-t">2025 全年</div>
       <div class="row"><span class="row-l">全年 EPS</span><span class="row-v g">${eps25} <span style="font-size:10px;color:var(--text3)">${eps25s}</span></span></div>
       <div class="row"><span class="row-l">年度最高股價</span><span class="row-v">${maxP}</span></div>
@@ -320,15 +628,15 @@ function buildCard(id){
       <div class="eps-bar-wrap">${chartHtml}</div>
       <div style="display:flex;gap:10px;font-size:10px;color:var(--text3)"><span><span style="width:8px;height:8px;background:var(--green);border-radius:2px;display:inline-block"></span> 實際</span><span><span style="width:8px;height:8px;background:var(--blue);border-radius:2px;display:inline-block;opacity:.7"></span> 保守估</span><span><span style="width:8px;height:8px;background:var(--orange);border-radius:2px;display:inline-block;opacity:.7"></span> 樂觀估</span></div></div>
     <div class="sec"><div class="sec-t">2026 Q1 月度營收</div>${monthHtml}${totalHtml}
-      <div style="background:var(--surface2);border-radius:8px;padding:8px 12px;margin-top:6px;display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="background:var(--surface2);border-radius:8px;padding:8px 12px;margin-top:6px;display:flex;justify-content:space-between">
         <div><div style="font-size:12px;font-weight:600">${q.epsEst||'預估中'}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${(q.note||'').replace(/\n/g,'<br>')}</div></div>
         <div style="font-size:10px;color:var(--text3)">Q1 EPS</div></div></div>
     <div class="sec"><div class="sec-t">2026 目標股價（保守 EPS）</div>
-      <div style="font-size:10px;color:var(--text3);margin-bottom:7px">法人共識 ${fmtNT(c.eps2026_cons)} → 保守下調 → 基準 ${fmtNT(bearEps)}</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:7px">法人共識 ${fmtNT(isUS?c.eps2026_cons*usdTwd:c.eps2026_cons)} → 保守 → 基準 ${fmtNT(epsInTwd)}</div>
       <table class="pe-tbl"><tr><th>PE 倍數</th><th>EPS</th><th>目標股價</th></tr>${peRows}</table></div>
     <div class="sec"><div class="sec-t">股價估算計算機</div>
       <div class="calc-row"><label>EPS</label><input type="range" id="sl-eps-${id}" min="1" max="${slMax}" value="${initEps}" step="1" oninput="recalc('${id}')"><span class="calc-val" id="vl-eps-${id}">${fmtNT(initEps)}</span></div>
-      <div class="calc-row"><label>PE</label><input type="range" id="sl-pe-${id}" min="8" max="60" value="${initPe}" step="1" oninput="recalc('${id}')"><span class="calc-val" id="vl-pe-${id}">${initPe}x</span></div>
+      <div class="calc-row"><label>PE</label><input type="range" id="sl-pe-${id}" min="8" max="65" value="${initPe}" step="1" oninput="recalc('${id}')"><span class="calc-val" id="vl-pe-${id}">${initPe}x</span></div>
       <div class="target-box"><div class="tl">目標股價</div><div class="tv" id="tgt-${id}">${fmtNT(initEps*initPe)}</div><div class="tn">僅供參考，非投資建議</div></div></div>`;
   return div;
 }
@@ -342,7 +650,7 @@ function recalc(uid){
 }
 
 async function updateCardPrice(id){
-  const c=COMPANIES[id];const el=document.getElementById('price-block-'+id);if(!el)return;
+  const c=COMPANIES[id];const el=document.getElementById('price-block-'+id);if(!el) return;
   const pd=await fetchPrice(c.ticker,c.market);
   if(!pd){el.innerHTML='<span class="price-loading">股價暫時無法取得，請點更新重試</span>';return;}
   const isUS=c.market==='us';const twdP=isUS?pd.price*usdTwd:pd.price;
@@ -351,27 +659,37 @@ async function updateCardPrice(id){
   let sigHtml='';
   if(sig){
     sigHtml+=sig.val==='cheap'?`<span class="signal cheap">💚 便宜 PE ${sig.livePe.toFixed(1)}x</span>`:sig.val==='expensive'?`<span class="signal expensive">🔴 偏貴 PE ${sig.livePe.toFixed(1)}x</span>`:`<span class="signal fair">🟡 合理 PE ${sig.livePe.toFixed(1)}x</span>`;
-    if(sig.dropSignal)sigHtml+=` <span class="signal watch">⚠️ ${sig.dropSignal.msg}</span>`;
+    if(sig.drop<=-20) sigHtml+=` <span class="signal watch">⚠️ 距高點跌${Math.abs(sig.drop).toFixed(0)}%</span>`;
   }
   let html=`<div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="live-price">${fmtNT(twdP,0)}</span>`;
-  if(isUS)html+=`<span style="font-size:11px;color:var(--text3)">(${fmtUSD(pd.price)})</span>`;
+  if(isUS) html+=`<span style="font-size:11px;color:var(--text3)">(${fmtUSD(pd.price)})</span>`;
   html+=`<span class="price-chg ${cls}">${chgStr}</span></div>`;
-  if(sigHtml)html+=`<div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap">${sigHtml}</div>`;
+  if(sigHtml) html+=`<div style="margin-top:6px;display:flex;gap:5px;flex-wrap:wrap">${sigHtml}</div>`;
   el.innerHTML=html;
-  const bearEps=c.eps2026_bear;
-  if(bearEps){const livePe=twdP/bearEps;c.peRows.forEach(pe=>{const row=document.getElementById(`pe-row-${id}-${pe}`);if(!row)return;Math.abs(pe-livePe)<2.5?row.classList.add('cur'):row.classList.remove('cur');});}
+  const epsInTwd=isUS?c.eps2026_bear*usdTwd:c.eps2026_bear;
+  c.peRows.forEach(pe=>{const row=document.getElementById(`pe-row-${id}-${pe}`);if(!row) return;Math.abs(pe-twdP/epsInTwd)<2.5?row.classList.add('cur'):row.classList.remove('cur');});
   checkAlerts(id,twdP);
+  // Draw chart after price is known
+  drawChart(id,`chart-${id}`);
 }
 
 function renderPicker(){
   const ct=document.getElementById('chips');ct.innerHTML='';
-  Object.entries(COMPANIES).forEach(([id,c])=>{const btn=document.createElement('button');btn.className='chip '+c.market+(selected.includes(id)?' active':'');btn.innerHTML=`<div class="cdot"></div>${c.name}`;btn.onclick=()=>selectCompany(id);ct.appendChild(btn);});
+  Object.entries(COMPANIES).forEach(([id,c])=>{
+    const btn=document.createElement('button');
+    btn.className='chip '+c.market+(selected.includes(id)?' active':'');
+    btn.innerHTML=`<div class="cdot"></div>${c.name}`;
+    btn.onclick=()=>selectCompany(id);ct.appendChild(btn);
+  });
 }
 
 function renderAll(){
-  const grid=document.getElementById('cards-grid');grid.className='cards'+(selected.length>1?' dual':'');
+  const grid=document.getElementById('cards-grid');
+  grid.className='cards'+(selected.length>1?' dual':'');
   if(!selected.length){grid.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div>點選上方公司開始分析</div></div>';return;}
-  grid.innerHTML='';selected.forEach(id=>grid.appendChild(buildCard(id)));selected.forEach(id=>updateCardPrice(id));
+  grid.innerHTML='';
+  selected.forEach(id=>grid.appendChild(buildCard(id)));
+  selected.forEach(id=>updateCardPrice(id));
 }
 
 function selectCompany(id){
@@ -379,12 +697,7 @@ function selectCompany(id){
   else selected=[id];
   renderPicker();updateHint();renderAll();
 }
-
-function toggleCompare(){
-  compareMode=!compareMode;document.getElementById('cmp-toggle').className='toggle'+(compareMode?' on':'');
-  if(!compareMode)selected=selected.slice(0,1);updateHint();renderAll();
-}
-
+function toggleCompare(){compareMode=!compareMode;document.getElementById('cmp-toggle').className='toggle'+(compareMode?' on':'');if(!compareMode)selected=selected.slice(0,1);updateHint();renderAll();}
 function updateHint(){const h=document.getElementById('cmp-hint');h.textContent=compareMode?(selected.length===0?'請選最多兩家':selected.length===1?'再選一家':'點選已選公司取消'):'';}
 
 // PORTFOLIO
@@ -392,31 +705,30 @@ function getPortfolio(){try{return JSON.parse(localStorage.getItem('portfolio')|
 function savePortfolio(p){localStorage.setItem('portfolio',JSON.stringify(p))}
 function populateStockSelects(){
   const opts=Object.entries(COMPANIES).map(([id,c])=>`<option value="${id}">${c.name}</option>`).join('');
-  const ps=document.getElementById('p-stock'),as=document.getElementById('a-stock');
-  if(ps)ps.innerHTML=opts;if(as)as.innerHTML=opts;
+  ['p-stock','a-stock'].forEach(sid=>{const el=document.getElementById(sid);if(el)el.innerHTML=opts;});
 }
 async function addHolding(){
-  const id=document.getElementById('p-stock').value;const shares=parseFloat(document.getElementById('p-shares').value);const cost=parseFloat(document.getElementById('p-cost').value);
+  const id=document.getElementById('p-stock').value,shares=parseFloat(document.getElementById('p-shares').value),cost=parseFloat(document.getElementById('p-cost').value);
   if(!id||!shares||!cost)return alert('請填寫所有欄位');
-  const p=getPortfolio();p.push({id,shares,cost,addedAt:Date.now()});savePortfolio(p);
+  const p=getPortfolio();p.push({id,shares,cost});savePortfolio(p);
   document.getElementById('p-shares').value='';document.getElementById('p-cost').value='';renderPortfolio();
 }
 async function renderPortfolio(){
-  const p=getPortfolio();const list=document.getElementById('holdings-list');const summary=document.getElementById('port-summary');
+  const p=getPortfolio(),list=document.getElementById('holdings-list'),summary=document.getElementById('port-summary');
   if(!p.length){list.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">尚無持股，從上方新增</div>';summary.innerHTML='';return;}
   let totalCost=0,totalVal=0;
   const rows=await Promise.all(p.map(async(h,i)=>{
     const c=COMPANIES[h.id];if(!c)return'';
     const pd=await fetchPrice(c.ticker,c.market);const isUS=c.market==='us';
     const curP=pd?(isUS?pd.price*usdTwd:pd.price):null;
-    const costT=h.shares*h.cost;const valT=curP?h.shares*curP:null;const pnl=valT!=null?valT-costT:null;const pnlPct=pnl!=null?pnl/costT*100:null;
+    const costT=h.shares*h.cost,valT=curP?h.shares*curP:null,pnl=valT!=null?valT-costT:null,pnlPct=pnl!=null?pnl/costT*100:null;
     if(costT)totalCost+=costT;if(valT)totalVal+=valT;
     const pnlHtml=pnl!=null?`<div class="port-pnl ${pnl>=0?'pos':'neg'}">${pnl>=0?'+':''}${fmtNT(pnl,0)}</div><div class="port-pnl-pct ${pnl>=0?'pos':'neg'}">${pnlPct>=0?'+':''}${pnlPct.toFixed(1)}%</div>`:'<div class="port-pnl" style="color:var(--text3)">—</div>';
     return`<div class="port-card"><div><div class="port-name">${c.name}</div><div class="port-detail">${fmtNum(h.shares)}股 × 成本${fmtNT(h.cost,0)} = ${fmtNT(costT,0)}</div>${curP?`<div class="port-detail">現價 ${fmtNT(curP,0)}</div>`:''}</div><div style="display:flex;align-items:center;gap:8px"><div style="text-align:right">${pnlHtml}</div><button class="port-del" onclick="removeHolding(${i})">✕</button></div></div>`;
   }));
   list.innerHTML=rows.join('');
-  const totalPnl=totalVal-totalCost;const totalPct=totalCost?totalPnl/totalCost*100:0;
-  summary.innerHTML=totalCost?`<div class="port-total"><div><div class="port-total-l">總成本</div><div class="port-total-v">${fmtNT(totalCost,0)}</div></div><div><div class="port-total-l">現值</div><div class="port-total-v">${fmtNT(totalVal,0)}</div></div><div><div class="port-total-l">損益</div><div class="port-total-v" style="color:${totalPnl>=0?'var(--green)':'var(--red)'}">${totalPnl>=0?'+':''}${fmtNT(totalPnl,0)}<br><span style="font-size:11px">${totalPct>=0?'+':''}${totalPct.toFixed(1)}%</span></div></div></div>`:'';
+  const totalPnl=totalVal-totalCost,totalPct=totalCost?totalPnl/totalCost*100:0;
+  summary.innerHTML=`<div class="port-total"><div><div class="port-total-l">總成本</div><div class="port-total-v">${fmtNT(totalCost,0)}</div></div><div><div class="port-total-l">現值</div><div class="port-total-v">${fmtNT(totalVal,0)}</div></div><div><div class="port-total-l">損益</div><div class="port-total-v" style="color:${totalPnl>=0?'var(--green)':'var(--red)'}">${totalPnl>=0?'+':''}${fmtNT(totalPnl,0)}<br><span style="font-size:11px">${totalPct>=0?'+':''}${totalPct.toFixed(1)}%</span></div></div></div>`;
 }
 function removeHolding(i){const p=getPortfolio();p.splice(i,1);savePortfolio(p);renderPortfolio();}
 
@@ -424,49 +736,89 @@ function removeHolding(i){const p=getPortfolio();p.splice(i,1);savePortfolio(p);
 function getAlerts(){try{return JSON.parse(localStorage.getItem('price_alerts')||'[]')}catch{return[]}}
 function saveAlerts(a){localStorage.setItem('price_alerts',JSON.stringify(a))}
 function addAlert(){
-  const id=document.getElementById('a-stock').value;const price=parseFloat(document.getElementById('a-price').value);const dir=document.getElementById('a-dir').value;
+  const id=document.getElementById('a-stock').value,price=parseFloat(document.getElementById('a-price').value),dir=document.getElementById('a-dir').value;
   if(!id||!price)return alert('請填寫所有欄位');
-  const a=getAlerts();a.push({id,price,dir,addedAt:Date.now(),triggered:false});saveAlerts(a);
+  const a=getAlerts();a.push({id,price,dir,triggered:false});saveAlerts(a);
   document.getElementById('a-price').value='';renderAlerts();
 }
 function renderAlerts(){
-  const a=getAlerts();const list=document.getElementById('alerts-list');
+  const a=getAlerts(),list=document.getElementById('alerts-list');
   if(!a.length){list.innerHTML='<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px">尚無警示設定</div>';return;}
-  list.innerHTML=a.map((al,i)=>{const c=COMPANIES[al.id];const dirL=al.dir==='below'?'跌破':'突破';return`<div class="alert-item"><div style="flex:1"><div class="alert-name${al.triggered?' triggered':''}">${c?.name||al.id}${al.triggered?' 🔔 已觸發':''}</div><div class="alert-price">${dirL} ${fmtNT(al.price,0)}</div></div><button class="alert-del" onclick="removeAlert(${i})">✕</button></div>`;}).join('');
+  list.innerHTML=a.map((al,i)=>{const c=COMPANIES[al.id];return`<div class="alert-item"><div style="flex:1"><div class="alert-name${al.triggered?' triggered':''}">${c?.name||al.id}${al.triggered?' 🔔 已觸發':''}</div><div class="alert-price">${al.dir==='below'?'跌破':'突破'} ${fmtNT(al.price,0)}</div></div><button class="alert-del" onclick="removeAlert(${i})">✕</button></div>`;}).join('');
 }
 function removeAlert(i){const a=getAlerts();a.splice(i,1);saveAlerts(a);renderAlerts();}
 function checkAlerts(id,price){
   const a=getAlerts();let changed=false;
-  a.forEach(al=>{if(al.id!==id||al.triggered)return;if(al.dir==='below'&&price<=al.price){al.triggered=true;changed=true;showToast(`🔔 ${COMPANIES[id]?.name} 已跌破 ${fmtNT(al.price,0)}`);}if(al.dir==='above'&&price>=al.price){al.triggered=true;changed=true;showToast(`🔔 ${COMPANIES[id]?.name} 已突破 ${fmtNT(al.price,0)}`); }});
+  a.forEach(al=>{if(al.id!==id||al.triggered)return;if((al.dir==='below'&&price<=al.price)||(al.dir==='above'&&price>=al.price)){al.triggered=true;changed=true;showToast(`🔔 ${COMPANIES[id]?.name} ${al.dir==='below'?'跌破':'突破'} ${fmtNT(al.price,0)}`); }});
   if(changed){saveAlerts(a);if(currentTab==='alerts')renderAlerts();}
 }
 function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:nowrap';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
 
-// NEWS
+// NEWS - Google News RSS for TW stocks, Finnhub for US
 function renderNewsChips(){
   const ct=document.getElementById('news-chips');ct.innerHTML='';
   Object.entries(COMPANIES).forEach(([id,c])=>{const btn=document.createElement('button');btn.className='chip '+c.market+(newsSelected===id?' active':'');btn.innerHTML=`<div class="cdot"></div>${c.name}`;btn.onclick=()=>loadNews(id,btn);ct.appendChild(btn);});
 }
+
 async function loadNews(id,btn){
-  newsSelected=id;document.querySelectorAll('#news-chips .chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  const list=document.getElementById('news-list');list.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><div>載入中…</div></div>';
-  const c=COMPANIES[id];const ticker=c.market==='tw'?c.ticker.replace('.TW','').replace('.TWO',''):c.ticker;
-  try{
-    const to=new Date().toISOString().split('T')[0];const from=new Date(Date.now()-7*24*3600*1000).toISOString().split('T')[0];
-    const r=await fetch(`https://finnhub.io/api/v1/company-news?symbol=${ticker}&from=${from}&to=${to}&token=${FINNHUB_KEY}`);
-    if(!r.ok)throw new Error();const news=await r.json();if(!news.length)throw new Error('no news');
-    list.innerHTML=`<div style="padding:0 2px">`+news.slice(0,15).map(n=>{const dt=new Date(n.datetime*1000);const ds=`${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,'0')}`;const s=n.sentiment==='positive'?'pos':n.sentiment==='negative'?'neg':'neu';const sl=s==='pos'?'利多':s==='neg'?'利空':'中性';return`<div class="news-item" onclick="window.open('${n.url}','_blank')"><div class="news-headline">${n.headline}</div><div class="news-meta"><span>${ds}</span><span>${n.source||''}</span><span class="news-sent ${s}">${sl}</span></div></div>`;}).join('')+'</div>';
-  }catch{list.innerHTML=`<div class="empty-state"><div class="empty-icon">📰</div><div style="font-size:12px;line-height:1.6">台股新聞需使用英文代碼查詢。<br>建議切換美股公司（NVDA/AMD/Apple/Meta）查看新聞。</div></div>`;}
+  newsSelected=id;
+  document.querySelectorAll('#news-chips .chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const list=document.getElementById('news-list');
+  list.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><div>載入中…</div></div>';
+  const c=COMPANIES[id];
+  let newsItems=[];
+
+  if(c.market==='us'){
+    // Finnhub for US stocks
+    try{
+      const to=new Date().toISOString().split('T')[0];
+      const from=new Date(Date.now()-7*24*3600*1000).toISOString().split('T')[0];
+      const r=await fetch(`https://finnhub.io/api/v1/company-news?symbol=${c.ticker}&from=${from}&to=${to}&token=${FINNHUB_KEY}`);
+      const news=await r.json();
+      newsItems=news.slice(0,15).map(n=>({
+        headline:n.headline,url:n.url,source:n.source,
+        time:new Date(n.datetime*1000),
+        sentiment:n.sentiment==='positive'?'pos':n.sentiment==='negative'?'neg':'neu',
+        sentLabel:n.sentiment==='positive'?'利多':n.sentiment==='negative'?'利空':'中性'
+      }));
+    }catch{}
+  } else {
+    // Google News RSS via corsproxy for TW stocks
+    const query=encodeURIComponent(c.name+' 股票');
+    try{
+      const rssUrl=`https://news.google.com/rss/search?q=${query}&hl=zh-TW&gl=TW&ceid=TW:zh-Hant`;
+      const r=await fetch(`https://corsproxy.io/?${encodeURIComponent(rssUrl)}`);
+      const text=await r.text();
+      const parser=new DOMParser();const xml=parser.parseFromString(text,'application/xml');
+      const items=xml.querySelectorAll('item');
+      newsItems=Array.from(items).slice(0,15).map(item=>({
+        headline:item.querySelector('title')?.textContent?.replace(/<[^>]+>/g,'')||'',
+        url:item.querySelector('link')?.textContent||'#',
+        source:item.querySelector('source')?.textContent||'Google News',
+        time:new Date(item.querySelector('pubDate')?.textContent||Date.now()),
+        sentiment:'neu',sentLabel:'中性'
+      }));
+    }catch{}
+  }
+
+  if(!newsItems.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">📰</div><div style="font-size:12px">暫無新聞資料</div></div>`;return;
+  }
+  list.innerHTML=`<div style="padding:0 2px">`+newsItems.map(n=>{
+    const dt=n.time;const ds=`${dt.getMonth()+1}/${dt.getDate()} ${dt.getHours()}:${String(dt.getMinutes()).padStart(2,'0')}`;
+    return`<div class="news-item" onclick="window.open('${n.url}','_blank')"><div class="news-headline">${n.headline}</div><div class="news-meta"><span>${ds}</span><span>${n.source}</span><span class="news-sent ${n.sentiment}">${n.sentLabel}</span></div></div>`;
+  }).join('')+'</div>';
 }
 
 async function refresh(){
   await fetchRate();
-  if(currentTab==='analyze')selected.forEach(id=>updateCardPrice(id));
-  else if(currentTab==='portfolio')renderPortfolio();
+  if(currentTab==='analyze') selected.forEach(id=>updateCardPrice(id));
+  else if(currentTab==='portfolio') renderPortfolio();
 }
 
 (async()=>{renderPicker();populateStockSelects();await fetchRate();selectCompany('PHISON');})();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
