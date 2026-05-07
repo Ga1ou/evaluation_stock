@@ -161,6 +161,17 @@ canvas{width:100%!important}
 </style>
 </head>
 <body>
+
+<div id="name-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; display:none; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+  <div style="background:var(--surface); padding:24px; border-radius:16px; width:80%; max-width:320px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+    <div style="font-size:32px; margin-bottom:12px;">👋</div>
+    <h3 style="margin-bottom:8px; color:var(--text);">歡迎來到股票估值</h3>
+    <p style="font-size:12px; color:var(--text2); margin-bottom:20px; line-height:1.5;">請先輸入您的稱呼，<br>解鎖並載入最新股市預測資料。</p>
+    <input type="text" id="visitor-name" placeholder="您的名字或 IG 帳號" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border2); margin-bottom:16px; font-size:14px; outline:none; text-align:center; font-family:var(--font);">
+    <button onclick="enterSite()" style="width:100%; padding:12px; border-radius:10px; background:var(--accent); color:#fff; border:none; font-size:14px; font-weight:600; cursor:pointer;">進入系統</button>
+  </div>
+</div>
+
 <div class="app">
 <nav class="nav">
   <div class="nav-left">
@@ -690,13 +701,11 @@ function renderPicker(){
   });
 }
 
-// 修改：將 renderAll 改為非同步，並加入「動態校正邏輯」
 async function renderAll(){
   const grid=document.getElementById('cards-grid');
   grid.className='cards'+(selected.length>1?' dual':'');
   if(!selected.length){grid.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div>點選上方公司開始分析</div></div>';return;}
   
-  // 加入過場提示避免等待時卡頓
   grid.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><div>計算最新估值中…</div></div>';
   
   for(const id of selected){
@@ -707,8 +716,6 @@ async function renderAll(){
       const twdP=isUS?pd.price*usdTwd:pd.price;
       const at=c.analystTarget;
       
-      // 【動態校正邏輯】如果即時股價偏離靜態寫死的目標區間太遠（大於最高價或小於最低價）
-      // 自動依照比例等幅放大/縮小目標價，避免預測線大跳水
       const basePrice = isUS ? pd.price : twdP;
       if(basePrice > at.max * 1.05 || basePrice < at.min * 0.95){
         const ratio = basePrice / at.avg;
@@ -716,7 +723,6 @@ async function renderAll(){
         at.avg = Math.round(at.avg * ratio);
         at.max = Math.round(at.max * ratio);
         
-        // 可選：同步微調 EPS，讓 PE 不至於太誇張
         c.eps2026_bear = c.eps2026_bear * ratio;
         c.eps2026_cons = c.eps2026_cons * ratio;
       }
@@ -728,7 +734,6 @@ async function renderAll(){
   selected.forEach(id=>updateCardPrice(id));
 }
 
-// 修改：配合 renderAll 非同步化
 async function selectCompany(id){
   if(compareMode){const idx=selected.indexOf(id);if(idx>-1)selected.splice(idx,1);else if(selected.length<2)selected.push(id);else selected[1]=id;}
   else selected=[id];
@@ -943,14 +948,65 @@ window.startGame = function() {
   requestAnimationFrame(update);
 }
 
-// 修改：重新整理時連同 renderAll 一起更新，確保目標價重新校正
+
+// === 新增：檢查訪客是否已經輸入過名字 ===
+function checkVisitor() {
+  const savedName = localStorage.getItem('visitor_name');
+  if (savedName) {
+    document.getElementById('name-modal').style.display = 'none';
+    setTimeout(() => showToast(`歡迎回來，${savedName}！`), 1000);
+  } else {
+    document.getElementById('name-modal').style.display = 'flex';
+  }
+}
+
+// === 新增：處理按鈕點擊與發送資料 ===
+function enterSite() {
+  const nameInput = document.getElementById('visitor-name').value.trim();
+  if (!nameInput) {
+    alert('請輸入稱呼喔！');
+    return;
+  }
+  
+  document.getElementById('name-modal').style.display = 'none';
+  showToast(`歡迎，${nameInput}！資料載入中...`);
+  
+  localStorage.setItem('visitor_name', nameInput);
+
+  // 🚨 注意：請把下面這行換成你的 FORMSPREE 網址
+  const webhookUrl = 'https://formspree.io/f/xaqvdwyz'; 
+  
+  fetch(webhookUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      "訪客名稱": nameInput,
+      "登入時間": new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+      "來源": "IG 主頁連結"
+    })
+  }).catch(error => {
+    console.log('偷偷發送失敗', error);
+  });
+}
+
+
 async function refresh(){
   await fetchRate();
   if(currentTab==='analyze') await renderAll();
   else if(currentTab==='portfolio') renderPortfolio();
 }
 
-(async()=>{renderPicker();populateStockSelects();await fetchRate();await selectCompany('PHISON');})();
+// === 修改：在初始化最前面加入 checkVisitor() ===
+(async()=>{
+  checkVisitor(); 
+  renderPicker();
+  populateStockSelects();
+  await fetchRate();
+  await selectCompany('PHISON');
+})();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
