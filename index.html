@@ -976,22 +976,18 @@ function enterSite() {
   // 🚨 注意：請把下面這行換成你的 FORMSPREE 網址
   const webhookUrl = 'https://formspree.io/f/xaqvdwyz'; 
   
+const formData = new FormData();
+  formData.append('訪客名稱', nameInput);
+  formData.append('登入時間', new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }));
+  formData.append('來源', 'IG 主頁連結');
+
   fetch(webhookUrl, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-      "訪客名稱": nameInput,
-      "登入時間": new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
-      "來源": "IG 主頁連結"
-    })
+    body: formData
   }).catch(error => {
     console.log('偷偷發送失敗', error);
   });
 }
-
 
 async function refresh(){
   await fetchRate();
