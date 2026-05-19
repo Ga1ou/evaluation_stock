@@ -948,14 +948,37 @@ window.startGame = function() {
   requestAnimationFrame(update);
 }
 
+// === 行為追蹤 ===
+function trackEvent(action, detail) {
+  const name = localStorage.getItem('visitor_name') || '匿名';
+  const formData = new FormData();
+  formData.append('訪客', name);
+  formData.append('動作', action);
+  formData.append('細節', String(detail));
+  formData.append('時間', new Date().toLocaleString('zh-TW', {timeZone:'Asia/Taipei'}));
+  fetch('https://formspree.io/f/xaqvdwyz', {method:'POST', body:formData}).catch(()=>{});
+}
+
+function resetVisitor() {
+  if(confirm('確定要重置名稱嗎？')) {
+    localStorage.removeItem('visitor_name');
+    localStorage.removeItem('visitor_time');
+    showToast('已重置，下次開啟將重新登入');
+  }
+}
 
 // === 新增：檢查訪客是否已經輸入過名字 ===
 function checkVisitor() {
   const savedName = localStorage.getItem('visitor_name');
-  if (savedName) {
+  const savedTime = parseInt(localStorage.getItem('visitor_time') || '0');
+  const days7 = 7 * 24 * 60 * 60 * 1000;
+  if (savedName && Date.now() - savedTime < days7) {
     document.getElementById('name-modal').style.display = 'none';
     setTimeout(() => showToast(`歡迎回來，${savedName}！`), 1000);
+    trackEvent('回訪', savedName);
   } else {
+    localStorage.removeItem('visitor_name');
+    localStorage.removeItem('visitor_time');
     document.getElementById('name-modal').style.display = 'flex';
   }
 }
@@ -970,8 +993,9 @@ function enterSite() {
   
   document.getElementById('name-modal').style.display = 'none';
   showToast(`歡迎，${nameInput}！資料載入中...`);
-  
   localStorage.setItem('visitor_name', nameInput);
+  localStorage.setItem('visitor_time', Date.now());
+  trackEvent('首次登入', nameInput);
 
   // 🚨 注意：請把下面這行換成你的 FORMSPREE 網址
   const webhookUrl = 'https://formspree.io/f/xaqvdwyz'; 
